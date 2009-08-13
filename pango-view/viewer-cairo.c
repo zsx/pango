@@ -27,7 +27,9 @@
 
 #include <string.h>
 
-
+#ifdef _MSC_VER
+#define strcasecmp stricmp
+#endif
 
 #ifdef HAVE_CAIRO_XLIB
 #ifdef HAVE_X
