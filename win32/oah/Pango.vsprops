@@ -28,7 +28,7 @@
 	/>
 	<UserMacro
 		Name="PangoMicroVersion"
-		Value="2"
+		Value="3"
 	/>
 	<UserMacro
 		Name="PangoApiVersion"
@@ -36,12 +36,12 @@
 	/>
 	<UserMacro
 		Name="PangoInterfaceAge"
-		Value="2"
+		Value="0"
 	/>
 	<!-- PangoBinaryAge = 100 * PangoMinorVersion + PangoMicroVersion -->
 	<UserMacro
 		Name="PangoBinaryAge"
-		Value="2502"
+		Value="2503"
 	/>
 	<UserMacro
 		Name="PangoVersion"
