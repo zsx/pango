@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C++ Express 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpango", "libpango.vcproj", "{E669C50D-8662-428F-8CA6-23E8DFC63527}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpangowin32", "libpangowin32.vcproj", "{E08ABD92-412B-405E-890D-3EFD7F661918}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpangocairo", "libpangocairo.vcproj", "{EA94C6CE-E72F-4C61-9A6D-4EC0EE67E5B2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		ReleaseWdkCrt|Win32 = ReleaseWdkCrt|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E669C50D-8662-428F-8CA6-23E8DFC63527}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E669C50D-8662-428F-8CA6-23E8DFC63527}.Debug|Win32.Build.0 = Debug|Win32
+		{E669C50D-8662-428F-8CA6-23E8DFC63527}.Release|Win32.ActiveCfg = Release|Win32
+		{E669C50D-8662-428F-8CA6-23E8DFC63527}.Release|Win32.Build.0 = Release|Win32
+		{E669C50D-8662-428F-8CA6-23E8DFC63527}.ReleaseWdkCrt|Win32.ActiveCfg = ReleaseWdkCrt|Win32
+		{E669C50D-8662-428F-8CA6-23E8DFC63527}.ReleaseWdkCrt|Win32.Build.0 = ReleaseWdkCrt|Win32
+		{E08ABD92-412B-405E-890D-3EFD7F661918}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E08ABD92-412B-405E-890D-3EFD7F661918}.Debug|Win32.Build.0 = Debug|Win32
+		{E08ABD92-412B-405E-890D-3EFD7F661918}.Release|Win32.ActiveCfg = Release|Win32
+		{E08ABD92-412B-405E-890D-3EFD7F661918}.Release|Win32.Build.0 = Release|Win32
+		{E08ABD92-412B-405E-890D-3EFD7F661918}.ReleaseWdkCrt|Win32.ActiveCfg = ReleaseWdkCrt|Win32
+		{E08ABD92-412B-405E-890D-3EFD7F661918}.ReleaseWdkCrt|Win32.Build.0 = ReleaseWdkCrt|Win32
+		{EA94C6CE-E72F-4C61-9A6D-4EC0EE67E5B2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EA94C6CE-E72F-4C61-9A6D-4EC0EE67E5B2}.Debug|Win32.Build.0 = Debug|Win32
+		{EA94C6CE-E72F-4C61-9A6D-4EC0EE67E5B2}.Release|Win32.ActiveCfg = Release|Win32
+		{EA94C6CE-E72F-4C61-9A6D-4EC0EE67E5B2}.Release|Win32.Build.0 = Release|Win32
+		{EA94C6CE-E72F-4C61-9A6D-4EC0EE67E5B2}.ReleaseWdkCrt|Win32.ActiveCfg = ReleaseWdkCrt|Win32
+		{EA94C6CE-E72F-4C61-9A6D-4EC0EE67E5B2}.ReleaseWdkCrt|Win32.Build.0 = ReleaseWdkCrt|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

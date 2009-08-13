@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Module Id='pango' Version='@VERSION@.0' Language="1033">
+		<Package Id="{EBCA0950-3405-40d7-ACB0-6153D2E71F28}"
+				Description="A library for layout and rendering of text, with an emphasis on internationalization."
+				Manufacturer="Free Software Community" InstallerVersion="300" />
+
+		<Directory Id='TARGETDIR' Name='SourceDir'>
+			<Directory Id='MODULE_DIR' Name='.'>
+				<Directory Id="FossBinDir" Name="bin">
+					<Component Id="libpango" Guid="{CB3E9802-7FDD-4819-9DE1-4F58AAE3AECC}">
+						<File Id="libpango.dll" Source="..\Win32\Release\bin\libpango-@API_VERSION@.dll" />
+					</Component>
+					<Component Id="libpangocairo" Guid="{EC3D826A-835F-4623-9D97-781EA25C7CCD}">
+						<File Id="libpangocairo.dll" Source="..\Win32\Release\bin\libpangocairo-@API_VERSION@.dll" />
+					</Component>
+					<Component Id="libpangowin32" Guid="{A247E6C6-F075-4d12-AC57-CD0AA1CEDE43}">
+						<File Id="libpangowin32.dll" Source="..\Win32\Release\bin\libpangowin32-@API_VERSION@.dll" />
+					</Component>
+				</Directory>
+			</Directory>
+		</Directory>
+	</Module>
+</Wix>

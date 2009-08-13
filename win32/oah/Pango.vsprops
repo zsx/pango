@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="Pango"
+	InheritedPropertySheets="$(OAH_INSTALLED_PATH)\vsprops\oah-PC.vsprops"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="&quot;$(IntDir)&quot;;&quot;$(IntDir)\pango&quot;;..\..;..\..\pango"
+		PreprocessorDefinitions="HAVE_CONFIG_H;G_LOG_DOMAIN=\&quot;Pango\&quot;;PANGO_ENABLE_BACKEND;PANGO_ENABLE_ENGINE;SYSCONFDIR=\&quot;c:/pango/etc\&quot;;LIBDIR=\&quot;c:/pango/lib\&quot;"
+	/>
+	<Tool
+		Name="VCLibrarianTool"
+		OutputFile="$(IntDir)\$(ProjectName).lib"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		ModuleDefinitionFile="..\..\pango\$(RootNamespace).def"
+	/>
+	<UserMacro
+		Name="PangoMajorVersion"
+		Value="1"
+	/>
+	<UserMacro
+		Name="PangoMinorVersion"
+		Value="25"
+	/>
+	<UserMacro
+		Name="PangoMicroVersion"
+		Value="2"
+	/>
+	<UserMacro
+		Name="PangoApiVersion"
+		Value="$(PangoMajorVersion).0"
+	/>
+	<UserMacro
+		Name="PangoInterfaceAge"
+		Value="2"
+	/>
+	<!-- PangoBinaryAge = 100 * PangoMinorVersion + PangoMicroVersion -->
+	<UserMacro
+		Name="PangoBinaryAge"
+		Value="2502"
+	/>
+	<UserMacro
+		Name="PangoVersion"
+		Value="$(PangoMajorVersion).$(PangoMinorVersion).$(PangoMicroVersion)"
+	/>
+	<UserMacro
+		Name="PangoModuleVersion"
+		Value="1.6.0"
+	/>
+	<UserMacro
+		Name="OahTargetVersion"
+		Value="-$(PangoApiVersion)"
+	/>
+</VisualStudioPropertySheet>

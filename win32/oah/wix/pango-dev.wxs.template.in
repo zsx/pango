@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Module Id="pangodev" Version="@VERSION@.0" Language="1033">
+		<Package Id="{8736975D-8125-43af-8150-13C5B720F7E7}"
+				Description="Development package without source code, but includes: headers, import libraries, binaries and pkg-config files"
+				Manufacturer="Free Software Community" InstallerVersion="300" />
+
+		<Dependency RequiredId="pango.EBCA0950_3405_40D7_ACB0_6153D2E71F28" RequiredLanguage="0" RequiredVersion="@VERSION@" />
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="MODULE_DIR" Name=".">
+				<Directory Id="ModuleInclude" Name="include">
+					<Directory Id="PangoTopLevelInclude" Name="pango-@API_VERSION@">
+						<Directory Id="PangoInclude" Name="pango">
+							<Component Id="includes" Guid="{5B49F482-B8BC-4523-BD99-C1555F37FD52}">
+								%(include/pango-@API_VERSION@/pango_files)s
+							</Component>
+						</Directory>
+					</Directory>
+				</Directory>
+
+				<Directory Id="ModuleLib" Name="lib">
+					<Component Id="libs" Guid="{1534553E-09DB-4539-B1B3-C6D5FF694333}">
+						%(lib_files)s
+					</Component>
+
+					<Directory Id="LibPkgConfig" Name="pkgconfig">
+						<Component Id="pcs" Guid="{1B395601-07ED-41ef-8EFD-2C9093D11621}">
+							%(pc_files)s
+						</Component>
+					</Directory>
+				</Directory>
+
+				<Directory Id="ModuleRedist" Name="redist">
+					<Component Id="msms" Guid="{238F718B-9D3A-4381-B0EC-4DCCFC7211AB}">
+						<File Id="pango.msm" Source="Win32\pango.msm" />
+					</Component>
+				</Directory>
+			</Directory>
+		</Directory>
+	</Module>
+</Wix>

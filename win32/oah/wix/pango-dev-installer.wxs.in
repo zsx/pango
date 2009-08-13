@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*" UpgradeCode="{6484A3F1-A5E9-444e-A192-B81B33575C52}" Version="@VERSION@.0" Language="1033" Name="Pango" Manufacturer="Free Software">
+		<Package InstallerVersion="300" Compressed="yes" InstallScope="perMachine"
+				Description="Pango for the OAH Build System"
+				Manufacturer="Free Software" />
+		<Media Id="1" Cabinet="pango_dev_installer.cab" EmbedCab="yes" />
+
+		<Property Id="OAH_BUILD_PRODUCT_DIR">
+			<RegistrySearch Id="OAHBuildProductDir"
+							Root="HKLM" Key="SOFTWARE\OAH Build" Name="ProductDir"
+							Type="raw" />
+		</Property>
+
+		<Property Id="FOSS_PRODUCT_DIR">
+			<RegistrySearch Id="FOSSProductDir"
+							Root="HKLM" Key="SOFTWARE\Free Software" Name="ProductDir"
+							Type="raw" />
+		</Property>
+
+		<Condition Message="OAH Build was not found. You need to install OAH Build before installing [ProductName].">
+			<![CDATA[Installed OR OAH_BUILD_PRODUCT_DIR]]>
+		</Condition>
+
+		<Condition Message="OAH Build was found, but where to install FOSS components is unknown. You need to reinstall OAH Build before installing [ProductName].">
+			<![CDATA[Installed OR FOSS_PRODUCT_DIR]]>
+		</Condition>
+
+		<!-- Directory structure -->
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="FOSS_PRODUCT_DIR">
+				<Merge Id='Pango' Language='1033' SourceFile='Win32\pango.msm' DiskId='1' />
+				<Merge Id='PangoDev' Language='1033' SourceFile='Win32\pango-dev.msm' DiskId='1' />
+
+				<Directory Id="ModuleRedist" Name="redist">
+					<Component Id="PangoDevRedist" Guid="{B64B22E6-7D31-425c-B8FE-54BA5D2ACE59}">
+						<File Id="pango_dev.msm" Source="Win32\pango-dev.msm" />
+					</Component>
+				</Directory>
+			</Directory>
+		</Directory>
+
+		<Feature Id="Binaries" Title="Pango Binaries" Level="1">
+			<MergeRef Id='Pango' />
+		</Feature>
+
+		<Feature Id="PangoDev" Title="Pango .h, .lib, .pc and redist files" Level="1">
+			<MergeRef Id='PangoDev' />
+			<ComponentRef Id="PangoDevRedist" />
+		</Feature>
+	</Product>
+</Wix>
