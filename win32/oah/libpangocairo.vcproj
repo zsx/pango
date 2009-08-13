@@ -38,20 +38,107 @@
 				Name="VCCustomBuildTool"
 			/>
 			<Tool
+				Name="PkgConfigOAHDepsTool"
+			/>
+			<Tool
 				Name="PkgConfigTool"
 			/>
 			<Tool
 				Name="SEDTool"
 			/>
 			<Tool
+				Name="GObjectGenMarshalTool"
+			/>
+			<Tool
+				Name="GObjectMkEnumsTemplateTool"
+			/>
+			<Tool
 				Name="DotInGeneratorTool"
-				Substitute="@PANGO_VERSION_MAJOR@/$(PangoMajorVersion);@PANGO_VERSION_MINOR@/$(PangoMinorVersion);@PANGO_VERSION_MICRO@/$(PangoMicroVersion);@PANGO_API_VERSION@/$(PangoApiVersion);@PANGO_INTERFACE_AGE@/$(PangoInterfaceAge);@PANGO_BINARY_AGE@/$(PangoBinaryAge);@VERSION@/$(PangoVersion);@PKGCONFIG_CAIRO_REQUIRES@/;@prefix@/\$\(OutDir\);@exec_prefix@/${prefix};@libdir@/${prefix}\/lib;@includedir@/${prefix}\/include"
+				Substitute="@PANGO_VERSION_MAJOR@/$(PangoMajorVersion);@PANGO_VERSION_MINOR@/$(PangoMinorVersion);@PANGO_VERSION_MICRO@/$(PangoMicroVersion);@PANGO_API_VERSION@/$(PangoApiVersion);@MODULE_VERSION@/$(PangoModuleVersion);@PANGO_INTERFACE_AGE@/$(PangoInterfaceAge);@PANGO_BINARY_AGE@/$(PangoBinaryAge);@VERSION@/$(PangoVersion);@PKGCONFIG_CAIRO_REQUIRES@/;@prefix@/\$\(OutDir\);@exec_prefix@/${prefix};@libdir@/${prefix}\/lib;@includedir@/${prefix}\/include"
+			/>
+			<Tool
+				Name="HeaderInstallerTool"
+				ModuleName="pango-$(PangoApiVersion)\pango"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug|x64"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(OAH_INSTALLED_PATH)\vsprops\oah-$(PlatformName)-$(ConfigurationName).vsprops;.\Pango.vsprops"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="SymbolsGeneratorTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="PkgConfigOAHDepsTool"
+			/>
+			<Tool
+				Name="PkgConfigTool"
+			/>
+			<Tool
+				Name="SEDTool"
 			/>
 			<Tool
 				Name="GObjectGenMarshalTool"
 			/>
 			<Tool
 				Name="GObjectMkEnumsTemplateTool"
+			/>
+			<Tool
+				Name="DotInGeneratorTool"
+				Substitute="@PANGO_VERSION_MAJOR@/$(PangoMajorVersion);@PANGO_VERSION_MINOR@/$(PangoMinorVersion);@PANGO_VERSION_MICRO@/$(PangoMicroVersion);@PANGO_API_VERSION@/$(PangoApiVersion);@PANGO_INTERFACE_AGE@/$(PangoInterfaceAge);@PANGO_BINARY_AGE@/$(PangoBinaryAge);@VERSION@/$(PangoVersion);@PKGCONFIG_CAIRO_REQUIRES@/;@prefix@/\$\(OutDir\);@exec_prefix@/${prefix};@libdir@/${prefix}\/lib;@includedir@/${prefix}\/include"
 			/>
 			<Tool
 				Name="HeaderInstallerTool"
@@ -120,86 +207,7 @@
 				Name="VCCustomBuildTool"
 			/>
 			<Tool
-				Name="PkgConfigTool"
-			/>
-			<Tool
-				Name="SEDTool"
-			/>
-			<Tool
-				Name="DotInGeneratorTool"
-				Substitute="@PANGO_VERSION_MAJOR@/$(PangoMajorVersion);@PANGO_VERSION_MINOR@/$(PangoMinorVersion);@PANGO_VERSION_MICRO@/$(PangoMicroVersion);@PANGO_API_VERSION@/$(PangoApiVersion);@PANGO_INTERFACE_AGE@/$(PangoInterfaceAge);@PANGO_BINARY_AGE@/$(PangoBinaryAge);@VERSION@/$(PangoVersion);@PKGCONFIG_CAIRO_REQUIRES@/;@prefix@/\$\(OutDir\);@exec_prefix@/${prefix};@libdir@/${prefix}\/lib;@includedir@/${prefix}\/include"
-			/>
-			<Tool
-				Name="GObjectGenMarshalTool"
-			/>
-			<Tool
-				Name="GObjectMkEnumsTemplateTool"
-			/>
-			<Tool
-				Name="HeaderInstallerTool"
-				ModuleName="pango-$(PangoApiVersion)\pango"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="ReleaseWdkCrt|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(OAH_INSTALLED_PATH)\vsprops\oah-$(PlatformName)-$(ConfigurationName).vsprops;.\Pango.vsprops"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="SymbolsGeneratorTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
+				Name="PkgConfigOAHDepsTool"
 			/>
 			<Tool
 				Name="PkgConfigTool"
@@ -208,95 +216,14 @@
 				Name="SEDTool"
 			/>
 			<Tool
-				Name="DotInGeneratorTool"
-				Substitute="@PANGO_VERSION_MAJOR@/$(PangoMajorVersion);@PANGO_VERSION_MINOR@/$(PangoMinorVersion);@PANGO_VERSION_MICRO@/$(PangoMicroVersion);@PANGO_API_VERSION@/$(PangoApiVersion);@PANGO_INTERFACE_AGE@/$(PangoInterfaceAge);@PANGO_BINARY_AGE@/$(PangoBinaryAge);@VERSION@/$(PangoVersion);@PKGCONFIG_CAIRO_REQUIRES@/;@prefix@/\$\(OutDir\);@exec_prefix@/${prefix};@libdir@/${prefix}\/lib;@includedir@/${prefix}\/include"
-			/>
-			<Tool
 				Name="GObjectGenMarshalTool"
 			/>
 			<Tool
 				Name="GObjectMkEnumsTemplateTool"
 			/>
 			<Tool
-				Name="HeaderInstallerTool"
-				ModuleName="pango-$(PangoApiVersion)\pango"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug|x64"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(OAH_INSTALLED_PATH)\vsprops\oah-$(PlatformName)-$(ConfigurationName).vsprops;.\Pango.vsprops"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="SymbolsGeneratorTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="PkgConfigTool"
-			/>
-			<Tool
-				Name="SEDTool"
-			/>
-			<Tool
 				Name="DotInGeneratorTool"
 				Substitute="@PANGO_VERSION_MAJOR@/$(PangoMajorVersion);@PANGO_VERSION_MINOR@/$(PangoMinorVersion);@PANGO_VERSION_MICRO@/$(PangoMicroVersion);@PANGO_API_VERSION@/$(PangoApiVersion);@PANGO_INTERFACE_AGE@/$(PangoInterfaceAge);@PANGO_BINARY_AGE@/$(PangoBinaryAge);@VERSION@/$(PangoVersion);@PKGCONFIG_CAIRO_REQUIRES@/;@prefix@/\$\(OutDir\);@exec_prefix@/${prefix};@libdir@/${prefix}\/lib;@includedir@/${prefix}\/include"
-			/>
-			<Tool
-				Name="GObjectGenMarshalTool"
-			/>
-			<Tool
-				Name="GObjectMkEnumsTemplateTool"
 			/>
 			<Tool
 				Name="HeaderInstallerTool"
@@ -365,20 +292,108 @@
 				Name="VCCustomBuildTool"
 			/>
 			<Tool
+				Name="PkgConfigOAHDepsTool"
+			/>
+			<Tool
 				Name="PkgConfigTool"
 			/>
 			<Tool
 				Name="SEDTool"
 			/>
 			<Tool
+				Name="GObjectGenMarshalTool"
+			/>
+			<Tool
+				Name="GObjectMkEnumsTemplateTool"
+			/>
+			<Tool
 				Name="DotInGeneratorTool"
 				Substitute="@PANGO_VERSION_MAJOR@/$(PangoMajorVersion);@PANGO_VERSION_MINOR@/$(PangoMinorVersion);@PANGO_VERSION_MICRO@/$(PangoMicroVersion);@PANGO_API_VERSION@/$(PangoApiVersion);@PANGO_INTERFACE_AGE@/$(PangoInterfaceAge);@PANGO_BINARY_AGE@/$(PangoBinaryAge);@VERSION@/$(PangoVersion);@PKGCONFIG_CAIRO_REQUIRES@/;@prefix@/\$\(OutDir\);@exec_prefix@/${prefix};@libdir@/${prefix}\/lib;@includedir@/${prefix}\/include"
+			/>
+			<Tool
+				Name="HeaderInstallerTool"
+				ModuleName="pango-$(PangoApiVersion)\pango"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="ReleaseWdkCrt|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(OAH_INSTALLED_PATH)\vsprops\oah-$(PlatformName)-$(ConfigurationName).vsprops;.\Pango.vsprops"
+			CharacterSet="2"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="SymbolsGeneratorTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="PkgConfigOAHDepsTool"
+			/>
+			<Tool
+				Name="PkgConfigTool"
+			/>
+			<Tool
+				Name="SEDTool"
 			/>
 			<Tool
 				Name="GObjectGenMarshalTool"
 			/>
 			<Tool
 				Name="GObjectMkEnumsTemplateTool"
+			/>
+			<Tool
+				Name="DotInGeneratorTool"
+				Substitute="@PANGO_VERSION_MAJOR@/$(PangoMajorVersion);@PANGO_VERSION_MINOR@/$(PangoMinorVersion);@PANGO_VERSION_MICRO@/$(PangoMicroVersion);@PANGO_API_VERSION@/$(PangoApiVersion);@PANGO_INTERFACE_AGE@/$(PangoInterfaceAge);@PANGO_BINARY_AGE@/$(PangoBinaryAge);@VERSION@/$(PangoVersion);@PKGCONFIG_CAIRO_REQUIRES@/;@prefix@/\$\(OutDir\);@exec_prefix@/${prefix};@libdir@/${prefix}\/lib;@includedir@/${prefix}\/include"
 			/>
 			<Tool
 				Name="HeaderInstallerTool"
@@ -447,20 +462,23 @@
 				Name="VCCustomBuildTool"
 			/>
 			<Tool
+				Name="PkgConfigOAHDepsTool"
+			/>
+			<Tool
 				Name="PkgConfigTool"
 			/>
 			<Tool
 				Name="SEDTool"
 			/>
 			<Tool
-				Name="DotInGeneratorTool"
-				Substitute="@PANGO_VERSION_MAJOR@/$(PangoMajorVersion);@PANGO_VERSION_MINOR@/$(PangoMinorVersion);@PANGO_VERSION_MICRO@/$(PangoMicroVersion);@PANGO_API_VERSION@/$(PangoApiVersion);@PANGO_INTERFACE_AGE@/$(PangoInterfaceAge);@PANGO_BINARY_AGE@/$(PangoBinaryAge);@VERSION@/$(PangoVersion);@PKGCONFIG_CAIRO_REQUIRES@/;@prefix@/\$\(OutDir\);@exec_prefix@/${prefix};@libdir@/${prefix}\/lib;@includedir@/${prefix}\/include"
-			/>
-			<Tool
 				Name="GObjectGenMarshalTool"
 			/>
 			<Tool
 				Name="GObjectMkEnumsTemplateTool"
+			/>
+			<Tool
+				Name="DotInGeneratorTool"
+				Substitute="@PANGO_VERSION_MAJOR@/$(PangoMajorVersion);@PANGO_VERSION_MINOR@/$(PangoMinorVersion);@PANGO_VERSION_MICRO@/$(PangoMicroVersion);@PANGO_API_VERSION@/$(PangoApiVersion);@PANGO_INTERFACE_AGE@/$(PangoInterfaceAge);@PANGO_BINARY_AGE@/$(PangoBinaryAge);@VERSION@/$(PangoVersion);@PKGCONFIG_CAIRO_REQUIRES@/;@prefix@/\$\(OutDir\);@exec_prefix@/${prefix};@libdir@/${prefix}\/lib;@includedir@/${prefix}\/include"
 			/>
 			<Tool
 				Name="HeaderInstallerTool"
@@ -591,20 +609,6 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="HeaderInstallerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="ReleaseWdkCrt|Win32"
-						>
-						<Tool
-							Name="HeaderInstallerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug|x64"
 						>
 						<Tool
@@ -612,7 +616,21 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="HeaderInstallerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release|x64"
+						>
+						<Tool
+							Name="HeaderInstallerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="ReleaseWdkCrt|Win32"
 						>
 						<Tool
 							Name="HeaderInstallerTool"
