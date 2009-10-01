@@ -1,4 +1,4 @@
-/* Pango Language Sample Table
+﻿/* Pango Language Sample Table
  *
  * Each entry is of the form:
  *
