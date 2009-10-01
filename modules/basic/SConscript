@@ -1,0 +1,9 @@
+# vim: ft=python expandtab
+Import('env')
+
+env_basic_win32 = env.Clone(PDB='libpango.pdb')
+
+env_pango.Append(CPPPATH=['#', '#pango'])
+
+if env_pangowin32['DEBUG'] == 1:
+    env_pangowin32.Alias('install', env_pangowin32.Install('$PREFIX/pdb', 'libpangowin32.pdb'))

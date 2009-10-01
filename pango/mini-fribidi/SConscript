@@ -1,0 +1,21 @@
+# vim: ft=python expandtab
+import tempfile
+import re
+import subprocess
+import os
+
+Import('env')
+env_mini_fribidi = env.Clone()
+
+env_mini_fribidi.Append(CPPDEFINES = [("SYSCONFDIR", r'"\"' + env_mini_fribidi['PREFIX'].replace('\\', '\\\\') + r'\\etc\""'),
+                         ("LIBDIR", r'"\"' + env_mini_fribidi['PREFIX'].replace('\\', '\\\\') + r'\\lib\""')])
+env_mini_fribidi.Append(CPPPATH=['#', '#pango'])
+
+libmini_fribidi_SOURCES =Split("\
+	fribidi.c		\
+	fribidi_char_type.c 	\
+	fribidi_types.c")
+
+#env_mini_fribidi.Append(LIBS = ['msimg32',  'gdi32', 'user32'])
+env_mini_fribidi.ParseConfig('pkg-config glib-2.0 --cflags --libs')
+env_mini_fribidi.StaticLibrary('mini-fribidi', libmini_fribidi_SOURCES)

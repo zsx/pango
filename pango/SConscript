@@ -1,0 +1,155 @@
+# vim: ft=python expandtab
+import tempfile
+import re
+import subprocess
+import os
+
+Import('env')
+
+env.Append(CPPDEFINES = [("G_LOG_DOMAIN", r'"\"Pango\""'), 
+                         "PANGO_ENABLE_BACKEND",
+                         "PANGO_ENABLE_ENGINE",
+                         ("SYSCONFDIR", r'"\"' + env['PREFIX'].replace('\\', '\\\\') + r'\\etc\""'),
+                         ("LIBDIR", r'"\"' + env['PREFIX'].replace('\\', '\\\\') + r'\\lib\""')])
+env.Append(CPPPATH=['#', '#pango'])
+
+SConscript('mini-fribidi/SConscript', exports='env')
+
+env_pango = env.Clone(PDB='libpango.pdb')
+
+
+pango_headers = Split("\
+	pango.h		   \
+	pango-attributes.h \
+	pango-bidi-type.h  \
+	pango-break.h	   \
+	pango-context.h	   \
+	pango-coverage.h   \
+	pango-engine.h	   \
+	pango-font.h       \
+	pango-fontmap.h	   \
+	pango-fontset.h    \
+	pango-glyph.h	   \
+	pango-glyph-item.h \
+	pango-gravity.h    \
+	pango-item.h	   \
+	pango-language.h   \
+	pango-layout.h	   \
+	pango-matrix.h     \
+	pango-modules.h	   \
+	pango-renderer.h   \
+	pango-script.h	   \
+	pango-tabs.h	   \
+	pango-types.h	   \
+	pango-utils.h")
+
+pango_sources =Split("\
+	break.c					\
+	ellipsize.c				\
+	fonts.c					\
+	glyphstring.c				\
+	modules.c				\
+	pango-attributes.c			\
+	pango-bidi-type.c			\
+	pango-color.c				\
+	pango-context.c				\
+	pango-coverage.c			\
+	pango-engine.c				\
+	pango-fontmap.c				\
+	pango-fontset.c				\
+	pango-glyph-item.c			\
+	pango-gravity.c				\
+	pango-item.c				\
+	pango-language.c			\
+	pango-layout.c				\
+	pango-markup.c				\
+	pango-matrix.c				\
+	pango-renderer.c			\
+	pango-script.c				\
+	pango-tabs.c				\
+	pango-utils.c				\
+	reorder-items.c				\
+	shape.c					\
+	pango-enum-types.c			\
+	module-defs-lang.c")
+
+env_pango.DotIn('module-defs-lang.c', 'module-defs-lang.c.in')
+
+env_pango_mk = env_pango.Clone(GLIB_MKENUMS = '%s\\bin\\glib-mkenums' % env_pango['PREFIX'])
+env_pango_mk_h = env_pango_mk.Clone(GLIB_MKENUMS_ARGV = (('fhead', r'"#ifndef __PANGO_ENUM_TYPES_H__\n#define __PANGO_ENUM_TYPES_H__\n\n#include <glib-object.h>\n\nG_BEGIN_DECLS\n"'),
+                            ('fprod', r'"/* enumerations from \"@filename@\" */\n"'),
+                            ('vhead', r'"GType @enum_name@_get_type (void);\n#define PANGO_TYPE_@ENUMSHORT@ (@enum_name@_get_type())\n"'),
+                            ('ftail', r'"G_END_DECLS\n\n#endif /* __PANGO_ENUM_TYPES_H__ */"')))
+env_pango_mk_h.AlwaysBuild(env_pango_mk_h.MkenumsGenerator('pango-enum-types.h', pango_headers))
+
+env_pango_mk_c = env_pango_mk.Clone(GLIB_MKENUMS_ARGV = (('fhead', '"#include <pango.h>"'),
+                            ('fprod', r'"\n/* enumerations from \"@filename@\" */"'),
+                            ('vhead', r'"GType\n@enum_name@_get_type (void)\n{\n  static GType etype = 0;\n  if (etype == 0) {\n    static const G@Type@Value values[] = {"'),
+                            ('vprod', r'"      { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" },"'),
+                            ('vtail', r'"      { 0, NULL, NULL }\n    };\n    etype = g_@type@_register_static (\"@EnumName@\", values);\n  }\n  return etype;\n}\n"')))
+env_pango_mk_c.AlwaysBuild(env_pango_mk_c.MkenumsGenerator('pango-enum-types.c', pango_headers))
+
+env_pango.DotIn('pango-features.h', 'pango-features.h.in')
+env_pango.Alias('install', env_pango.Install('$PREFIX/include/pango-1.0/pango', pango_headers + ['pango-enum-types.h', 'pango-features.h']))
+
+env_pango['DOT_SYMBOLS_FLAGS'] = '-DINCLUDE_VARIABLES -DG_OS_WIN32 -DALL_FILES'
+
+env_pango.DotIn('pango.rc', 'pango.rc.in')
+env_pango.RES('pango.res', 'pango.rc')
+env_pango.ParseConfig('pkg-config cairo --cflags --libs')
+env_pango.ParseConfig('pkg-config gobject-2.0 --cflags --libs')
+env_pango.ParseConfig('pkg-config gmodule-2.0 --cflags --libs')
+#env_pango.Append(LIBS = ['msimg32',  'gdi32', 'user32'])
+dll = env_pango.SharedLibrary(['libpango' + env_pango['LIB_SUFFIX'] + '.dll', 'pango.lib'], pango_sources + ['mini-fribidi/mini-fribidi.lib', 'pango.def', 'pango.res'])
+env_pango.AddPostAction(dll, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;2')
+env_pango.Alias('install', env_pango.Install('$PREFIX/bin', 'libpango' + env_pango['LIB_SUFFIX'] + '.dll'))
+env_pango.Alias('install', env_pango.Install('$PREFIX/lib', 'pango.lib'))
+env_pango.Alias('install', env_pango.InstallAs('$PREFIX/lib/libpango.lib', 'pango.lib'))
+if env_pango['DEBUG'] == 1:
+    env_pango.Alias('install', env_pango.Install('$PREFIX/pdb', 'libpango.pdb'))
+
+#pangocairo
+env_pangocairo = env.Clone(PDB='libpangocairo.pdb')
+env_pangocairo.Append(CPPDEFINES=['HAVE_CAIRO_WIN32'])
+libpangocairo_SOURCES = Split(" \
+	pangocairo-context.c    \
+	pangocairo-font.c	\
+	pangocairo-fontmap.c    \
+	pangocairo-render.c")
+libpangocairo_SOURCES += Split("pangocairo-win32font.c pangocairo-win32fontmap.c")
+env_pangocairo.ParseConfig('pkg-config cairo --cflags --libs')
+env_pangocairo.ParseConfig('pkg-config gobject-2.0 --cflags --libs')
+env_pangocairo.ParseConfig('pkg-config gmodule-2.0 --cflags --libs')
+env_pangocairo.Append(LIBS=['kernel32', 'user32', 'gdi32', 'advapi32'])
+dll = env_pangocairo.SharedLibrary(['libpangocairo' + env_pangocairo['LIB_SUFFIX'] + '.dll', 'pangocairo.lib'], libpangocairo_SOURCES + ['pango.lib', 'pangowin32.lib', 'pangocairo.def', 'pango.res'])
+env_pangocairo.AddPostAction(dll, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;2')
+env_pangocairo.Alias('install', env_pangocairo.Install('$PREFIX/bin', 'libpangocairo' + env_pangocairo['LIB_SUFFIX'] + '.dll'))
+env_pangocairo.Alias('install', env_pangocairo.Install('$PREFIX/lib', 'pangocairo.lib'))
+env_pangocairo.Alias('install', env_pangocairo.InstallAs('$PREFIX/lib/libpangocairo.lib', 'pangocairo.lib'))
+if env_pangocairo['DEBUG'] == 1:
+    env_pangocairo.Alias('install', env_pangocairo.Install('$PREFIX/pdb', 'libpangocairo.pdb'))
+
+#modules
+env_modules_basic_win32 = env.Clone()
+env_modules_basic_win32.ParseConfig('pkg-config gobject-2.0 --cflags --libs')
+env_modules_basic_win32.Append(CPPDEFINES=[('PANGO_MODULE_PREFIX', '_pango_basic_win32')])
+env_modules_basic_win32.StaticObject('basic-win32.obj', '#modules/basic/basic-win32.c')
+#pangowin32
+env_pangowin32 = env.Clone(PDB='libpangowin32.pdb')
+libpangowin32_SOURCES = Split(" \
+	module-defs-win32.c	\
+	pangowin32.c		\
+	pangowin32-fontcache.c	\
+	pangowin32-fontmap.c")
+env_pangowin32.DotIn('module-defs-win32.c', 'module-defs-win32.c.win32')
+env_pangowin32.ParseConfig('pkg-config cairo --cflags --libs')
+env_pangowin32.ParseConfig('pkg-config gobject-2.0 --cflags --libs')
+env_pangowin32.ParseConfig('pkg-config gmodule-2.0 --cflags --libs')
+env_pangowin32.Append(LIBS=['kernel32', 'user32', 'gdi32', 'advapi32'])
+dll = env_pangowin32.SharedLibrary(['libpangowin32' + env_pangowin32['LIB_SUFFIX'] + '.dll', 'pangowin32.lib'], libpangowin32_SOURCES + ['pango.lib', 'basic-win32.obj', 'pangowin32.def', 'pango.res'])
+env_pangowin32.AddPostAction(dll, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;2')
+env_pangowin32.Alias('install', env_pangowin32.Install('$PREFIX/bin', 'libpangowin32' + env_pangowin32['LIB_SUFFIX'] + '.dll'))
+env_pangowin32.Alias('install', env_pangowin32.Install('$PREFIX/lib', 'pangowin32.lib'))
+env_pangowin32.Alias('install', env_pangowin32.InstallAs('$PREFIX/lib/libpangowin32.lib', 'pangowin32.lib'))
+if env_pangowin32['DEBUG'] == 1:
+    env_pangowin32.Alias('install', env_pangowin32.Install('$PREFIX/pdb', 'libpangowin32.pdb'))
