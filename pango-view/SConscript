@@ -1,0 +1,25 @@
+# vim: ft=python expandtab
+import tempfile
+import re
+import subprocess
+import os
+
+Import('env')
+
+env_pango_view = env.Clone(PDB='pango-view.pdb')
+env_pango_view.Append(CPPDEFINES=[('strcasecmp', '_stricmp'),
+                                  'HAVE_CAIRO'])
+env_pango_view.Append(CPPPATH=['#', '#pango'])
+env_pango_view.Append(LIBS=['pangocairo-1.0', 'pango-1.0'])
+env_pango_view.Append(LIBPATH=['#pango'])
+env_pango_view.ParseConfig('pkg-config cairo --cflags --libs')
+env_pango_view.ParseConfig('pkg-config gobject-2.0 --cflags --libs')
+
+pango_view_SOURCES =Split("					\
+	viewer-render.c					\
+	viewer-main.c					\
+	pango-view.c                                    \
+	viewer-cairo.c					\
+	viewer-pangocairo.c")
+
+env_pango_view.Program('pango-view', pango_view_SOURCES)

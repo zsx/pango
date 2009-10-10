@@ -47,4 +47,5 @@ env.DotIn('pangoft2.pc', 'pangoft2.pc.in')
 env.DotIn('pangoxft.pc', 'pangoxft.pc.in')
 env.Alias('install', env.Install('$PREFIX/lib/pkgconfig', ['pango.pc']))
 
-SConscript(['pango/SConscript'], exports = 'env')
+SConscript(['pango/SConscript',
+            'pango-view/SConscript'], exports = 'env')
