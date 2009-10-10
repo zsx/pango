@@ -80,14 +80,14 @@ env_pango_mk_h = env_pango_mk.Clone(GLIB_MKENUMS_ARGV = (('fhead', r'"#ifndef __
                             ('fprod', r'"/* enumerations from \"@filename@\" */\n"'),
                             ('vhead', r'"GType @enum_name@_get_type (void);\n#define PANGO_TYPE_@ENUMSHORT@ (@enum_name@_get_type())\n"'),
                             ('ftail', r'"G_END_DECLS\n\n#endif /* __PANGO_ENUM_TYPES_H__ */"')))
-env_pango_mk_h.AlwaysBuild(env_pango_mk_h.MkenumsGenerator('pango-enum-types.h', pango_headers))
+env_pango_mk_h.Depends(env_pango_mk_h.MkenumsGenerator('pango-enum-types.h', pango_headers), 'SConscript')
 
 env_pango_mk_c = env_pango_mk.Clone(GLIB_MKENUMS_ARGV = (('fhead', '"#include <pango.h>"'),
                             ('fprod', r'"\n/* enumerations from \"@filename@\" */"'),
                             ('vhead', r'"GType\n@enum_name@_get_type (void)\n{\n  static GType etype = 0;\n  if (etype == 0) {\n    static const G@Type@Value values[] = {"'),
                             ('vprod', r'"      { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" },"'),
                             ('vtail', r'"      { 0, NULL, NULL }\n    };\n    etype = g_@type@_register_static (\"@EnumName@\", values);\n  }\n  return etype;\n}\n"')))
-env_pango_mk_c.AlwaysBuild(env_pango_mk_c.MkenumsGenerator('pango-enum-types.c', pango_headers))
+env_pango_mk_c.Depends(env_pango_mk_c.MkenumsGenerator('pango-enum-types.c', pango_headers), 'SConscript')
 
 env_pango.DotIn('pango-features.h', 'pango-features.h.in')
 env_pango.Alias('install', env_pango.Install('$PREFIX/include/pango-1.0/pango', pango_headers + ['pango-enum-types.h', 'pango-features.h']))
@@ -136,6 +136,7 @@ env_modules_basic_win32.Append(CPPDEFINES=[('PANGO_MODULE_PREFIX', '_pango_basic
 env_modules_basic_win32.StaticObject('basic-win32.obj', '#modules/basic/basic-win32.c')
 #pangowin32
 env_pangowin32 = env.Clone(PDB='libpangowin32.pdb')
+env_pangowin32.Append(CPPDEFINES=[('PANGO_MODULE_PREFIX', '_pango_basic_win32')])
 libpangowin32_SOURCES = Split(" \
 	module-defs-win32.c	\
 	pangowin32.c		\
@@ -153,3 +154,13 @@ env_pangowin32.Alias('install', env_pangowin32.Install('$PREFIX/lib', 'pangowin3
 env_pangowin32.Alias('install', env_pangowin32.InstallAs('$PREFIX/lib/libpangowin32-1.0.lib', 'pangowin32-1.0.lib'))
 if env_pangowin32['DEBUG'] == 1:
     env_pangowin32.Alias('install', env_pangowin32.Install('$PREFIX/pdb', 'libpangowin32.pdb'))
+
+#pango-query
+env_pango_query_modules = env_pango.Clone(PDB = 'pango-query.pdb')
+env_pango_query_modules.AddPostAction(
+    env_pango_query_modules.Program('pango-querymodules', ['querymodules.c', 'pangowin32-1.0.lib', 'pango-1.0.lib']),
+    'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;2')
+query_install = env_pango_query_modules.Install('$PREFIX/bin', 'pango-querymodules.exe')
+env_pango_query_modules.Command('pango.modules', '$PREFIX/bin/pango-querymodules.exe', '$SOURCE > $TARGET')
+pango_modules_install = env_pango_query_modules.Install('$PREFIX/etc/pango/', 'pango.modules')
+env_pango_query_modules.Alias('install', pango_modules_install)
