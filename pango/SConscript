@@ -94,6 +94,20 @@ env_pango.Alias('install', env_pango.Install('$PREFIX/include/pango-1.0/pango', 
 
 env_pango['DOT_SYMBOLS_FLAGS'] = '-DINCLUDE_VARIABLES -DG_OS_WIN32 -DALL_FILES'
 
+#replace string literals in pango-language-sample-table.h with hex
+def replace_with_hex(target, source, env):
+    def dr(mo):
+        return '"' + "".join(map(lambda x: '\\x%2x'%ord(x), mo.group(1))) + '"'
+    ft = file(str(target[0]), 'wb')
+    fs = file(str(source[0]), 'rb')
+    lines = fs.read()
+    lines = re.sub(r'"(.*?)"', dr, lines)
+    ft.write(lines)
+    ft.close()
+    fs.close()
+
+env_pango.Command('pango-language-sample-table.h', 'pango-language-sample-table.h.in', replace_with_hex)
+
 env_pango.DotIn('pango.rc', 'pango.rc.in')
 env_pango.RES('pango.res', 'pango.rc')
 env_pango.ParseConfig('pkg-config cairo --cflags --libs')
@@ -101,6 +115,8 @@ env_pango.ParseConfig('pkg-config gobject-2.0 --cflags --libs')
 env_pango.ParseConfig('pkg-config gmodule-2.0 --cflags --libs')
 #env_pango.Append(LIBS = ['msimg32',  'gdi32', 'user32'])
 dll = env_pango.SharedLibrary(['libpango' + env_pango['LIB_SUFFIX'] + '.dll', 'pango-1.0.lib'], pango_sources + ['mini-fribidi/mini-fribidi.lib', 'pango.def', 'pango.res'])
+env_pango.Depends(dll, 'pango-language-sample-table.h')
+
 env_pango.AddPostAction(dll, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;2')
 env_pango.Alias('install', env_pango.Install('$PREFIX/bin', 'libpango' + env_pango['LIB_SUFFIX'] + '.dll'))
 env_pango.Alias('install', env_pango.Install('$PREFIX/lib', 'pango-1.0.lib'))
