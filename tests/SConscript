@@ -1,0 +1,29 @@
+# vim: ft=python expandtab
+Import('env')
+
+env_tests = env.Clone()
+env_tests.Append(CPPDEFINES=['HAVE_WIN32'])
+env_tests.Append(CPPPATH=['#', '#pango'])
+env_tests.Append(LIBS=['pangocairo-1.0', 'pango-1.0', 'pangowin32-1.0'])
+env_tests.Append(LIBPATH=['#pango'])
+env_tests.ParseConfig('pkg-config cairo --cflags --libs')
+env_tests.ParseConfig('pkg-config gobject-2.0 --cflags --libs')
+
+env_tests.Command('pangorc', '#modules/pangorc', 'copy $SOURCE $TARGET')
+env_tests['DOT_IN_SUBS'] = {'@SHELL@': '/bin/sh',
+                            '@ECHO_C@': 'echo -c',
+                            '@ECHO_N@': 'echo -n'}
+env_tests.DotIn('runtests.sh', 'runtests.sh.in')
+
+tests = ('gen-all-unicode',
+         'dump-boundaries',
+         'testboundaries',
+         'testboundaries_ucd',
+         'testcolor',
+         'testscript',
+         'testiter')
+for x in tests:
+    e = env_tests.Clone(PDB = x + '.pdb')
+    e.Program(x, x + '.c')
+    if x == 'gen-all-unicode':
+        e.Command('all-unicode.txt', 'gen-all-unicode.exe', '$SOURCE > $TARGET')
