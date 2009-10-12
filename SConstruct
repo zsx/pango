@@ -14,7 +14,7 @@ env = Environment(variables = opts,
 Initialize(env)
 env.Append(CPPPATH=['#'])
 env.Append(CFLAGS=env['DEBUG_CFLAGS'])
-env.Append(CPPDEFINES=env['DEBUG_CPPDEFINES'])
+env.Append(CPPDEFINES= env['DEBUG_CPPDEFINES'])
 
 PANGO_VERSION_MAJOR=1
 PANGO_VERSION_MINOR=26
@@ -47,5 +47,10 @@ env.DotIn('pangoft2.pc', 'pangoft2.pc.in')
 env.DotIn('pangoxft.pc', 'pangoxft.pc.in')
 env.Alias('install', env.Install('$PREFIX/lib/pkgconfig', ['pango.pc']))
 
-SConscript(['pango/SConscript',
-            'pango-view/SConscript'], exports = 'env')
+subs = ['pango/SConscript',
+        'pango-view/SConscript']
+
+if ARGUMENTS.get('build_test', 0):
+    subs += ['tests/SConscript']
+
+SConscript(subs, exports = 'env')
