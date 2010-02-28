@@ -23,3 +23,8 @@ pango_view_SOURCES =Split("					\
 	viewer-pangocairo.c")
 
 env_pango_view.Program('pango-view', pango_view_SOURCES)
+
+if 'dev' in env['install']:
+    #env.Tag('pango-view.exe', PACKAGING_INSTALL_LOCATION = 'bin')
+    env.Alias('install', env.Install(r'C:\bin', 'pango-view.exe'))
+    env.Alias('install', env.Install(r'C:\pdb', 'pango-view.pdb'))
