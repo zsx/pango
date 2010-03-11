@@ -8,6 +8,7 @@ opts.Add(PathVariable('PREFIX', 'Installation prefix', os.path.expanduser('~/FOS
 opts.Add(BoolVariable('DEBUG', 'Build with Debugging information', 0))
 opts.Add(PathVariable('PERL', 'Path to the executable perl', r'C:\Perl\bin\perl.exe', PathVariable.PathIsFile))
 opts.Add(ListVariable("install", "targets to install", ["run,dev"], ['run', 'dev']))
+opts.Add(BoolVariable('WITH_OSMSVCRT', 'Link with the os supplied msvcrt.dll instead of the one supplied by the compiler (msvcr90.dll, for instance)', 0))
 
 env = Environment(variables = opts,
                   ENV=os.environ, tools = ['default', 'packaging', GBuilder])
@@ -16,6 +17,9 @@ Initialize(env)
 env.Append(CPPPATH=['#'])
 env.Append(CFLAGS=env['DEBUG_CFLAGS'])
 env.Append(CPPDEFINES= env['DEBUG_CPPDEFINES'])
+
+if env['WITH_OSMSVCRT']:
+    env['LIB_SUFFIX'] = '-0'
 
 PANGO_VERSION_MAJOR=1
 PANGO_VERSION_MINOR=26
