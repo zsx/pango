@@ -232,6 +232,7 @@ env_pango_query_modules.AddPostAction(
     env_pango_query_modules.Program('pango-querymodules', ['querymodules.c', 'pangowin32-1.0.lib', 'pango-1.0.lib']),
     'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;2')
 query_install = env_pango_query_modules.Install(r'C:/bin', 'pango-querymodules.exe')
+env_pango_query_modules.PrependENVPath("PATH", env_pango_query_modules['PREFIX'] + r'\\bin')
 env_pango_query_modules.Command('pango.modules', 'pango-querymodules.exe', '$SOURCE > $TARGET')
 pango_modules_install = env.Install(r'C:/etc/pango/', 'pango.modules')
 if 'run' in env['install']:
