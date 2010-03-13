@@ -13,7 +13,8 @@ env.Append(CPPDEFINES = [("G_LOG_DOMAIN", r'"\"Pango\""'),
                          ("LIBDIR", r'"\"' + env['PREFIX'].replace('\\', '\\\\') + r'\\lib\""')])
 env.Append(CPPPATH=['#', '#pango'])
 
-SConscript('mini-fribidi/SConscript', exports='env')
+SConscript(['mini-fribidi/SConscript'#, 'opentype/SConscript' #doesn't compile yet
+    ], exports='env')
 
 env_pango = env.Clone(PDB='libpango.pdb')
 
@@ -127,6 +128,48 @@ if 'dev' in env['install']:
     env.Alias('install', env.InstallAs(r'C:/lib/libpango-1.0.lib', 'pango-1.0.lib'))
     if env_pango['DEBUG'] == 1:
         env.Alias('install', env.Install(r'C:/pdb', 'libpango.pdb'))
+'''
+#freetype2 doesn't compile yet
+#pangoft2
+env_pangoft2 = env.Clone(PDB='libpangoft2.pdb')
+env_pangoft2.Append(CPPDEFINES=['HAVE_FREETYPE', ('PANGO_MODULE_PREFIX', '_pango_basic_ft2')])
+libpangoft2_HEADERS = Split("\
+	pango-ot.h		\
+	pangofc-font.h		\
+	pangofc-fontmap.h	\
+	pangofc-decoder.h	\
+	pangoft2.h")
+libpangoft2_SOURCES = Split(" \
+	pangofc-font.c	   	\
+	pangofc-fontmap.c	\
+	pangofc-decoder.c	\
+	pangoft2.c")
+libpangoft2_SOURCES += Split("\
+	module-defs-fc.c	\
+	pangoft2-fontmap.c	\
+	pangoft2-render.c	\
+	pango-ot-buffer.c	\
+	pango-ot-info.c		\
+	pango-ot-ruleset.c      \
+	pango-ot-tag.c")
+env_pangoft2.DotIn('module-defs-fc.c', 'module-defs-fc.c.win32')
+env_pangoft2.ParseConfig('pkg-config freetype2 --cflags --libs')
+env_pangoft2.ParseConfig('pkg-config gobject-2.0 --cflags --libs')
+env_pangoft2.ParseConfig('pkg-config gmodule-2.0 --cflags --libs')
+env_pangoft2.Append(LIBS=['kernel32', 'user32', 'gdi32', 'advapi32'])
+dll = env_pangoft2.SharedLibrary(['libpangoft2' + env_pangoft2['LIB_SUFFIX'] + '.dll', 'pangoft2-1.0.lib'], libpangoft2_SOURCES + ['pango-1.0.lib', 'pangoft2.def', 'pango.res', 'opentype/libharfbuzz.lib'])
+env_pangoft2.AddPostAction(dll, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;2')
+
+if 'run' in env['install']:
+    env.Alias('install', env.Install(r'C:/bin', 'libpangoft2' + env_pangoft2['LIB_SUFFIX'] + '.dll'))
+
+if 'dev' in env['install']:
+    env.Alias('install', env.Install(r'C:/include/pango-1.0/pango', libpangoft2_HEADERS))
+    env.Alias('install', env.Install(r'C:/lib', 'pangoft2-1.0.lib'))
+    env.Alias('install', env.InstallAs(r'C:/lib/libpangoft2-1.0.lib', 'pangoft2-1.0.lib'))
+    if env_pangoft2['DEBUG'] == 1:
+        env.Alias('install', env.Install(r'C:/pdb', 'libpangoft2.pdb'))
+'''
 
 #pangocairo
 env_pangocairo = env.Clone(PDB='libpangocairo.pdb')
