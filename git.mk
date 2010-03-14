@@ -82,7 +82,7 @@ git-mk-install:
 ### .gitignore generation
 
 $(srcdir)/.gitignore: Makefile.am $(top_srcdir)/git.mk
-	@echo Generating $@; \
+	$(AM_V_GEN) \
 	{ \
 		if test "x$(DOC_MODULE)" = x -o "x$(DOC_MAIN_SGML_FILE)" = x; then :; else \
 			for x in \
@@ -115,6 +115,7 @@ $(srcdir)/.gitignore: Makefile.am $(top_srcdir)/git.mk
 				po/.intltool-merge-cache \
 				"po/*.gmo" \
 				"po/*.mo" \
+				po/$(GETTEXT_PACKAGE).pot \
 				intltool-extract.in \
 				intltool-merge.in \
 				intltool-update.in \
@@ -171,8 +172,11 @@ gitignore-recurse-maybe:
 		$(MAKE) $(AM_MAKEFLAGS) gitignore-recurse; \
 	fi;
 gitignore-recurse:
-	@list='$(DIST_SUBDIRS)'; for subdir in $$list; do \
-	  test "$$subdir" = . || (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) .gitignore gitignore-recurse || echo "Skipping $$subdir"); \
+	@for subdir in $(DIST_SUBDIRS); do \
+	  case " $(SUBDIRS) " in \
+	    *" $$subdir "*) :;; \
+	    *) test "$$subdir" = . || (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) .gitignore gitignore-recurse || echo "Skipping $$subdir");; \
+	  esac; \
 	done
 gitignore: $(srcdir)/.gitignore gitignore-recurse
 

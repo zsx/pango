@@ -23,6 +23,7 @@
 
 #include "pango-ot-private.h"
 #include "pangofc-private.h"
+#include "pango-impl-utils.h"
 
 /* cache a single hb_buffer_t */
 static hb_buffer_t *cached_buffer = NULL;
@@ -204,28 +205,11 @@ pango_ot_buffer_get_glyphs (const PangoOTBuffer  *buffer,
 }
 
 static void
-swap_range (PangoGlyphString *glyphs, int start, int end)
-{
-  int i, j;
-
-  for (i = start, j = end - 1; i < j; i++, j--)
-    {
-      PangoGlyphInfo glyph_info;
-      gint log_cluster;
-
-      glyph_info = glyphs->glyphs[i];
-      glyphs->glyphs[i] = glyphs->glyphs[j];
-      glyphs->glyphs[j] = glyph_info;
-
-      log_cluster = glyphs->log_clusters[i];
-      glyphs->log_clusters[i] = glyphs->log_clusters[j];
-      glyphs->log_clusters[j] = log_cluster;
-    }
-}
-
-static void
 apply_gpos_ltr (PangoGlyphString    *glyphs,
 		hb_glyph_position_t *positions,
+		gboolean             scale,
+		double               xscale,
+		double               yscale,
 		gboolean             is_hinted)
 {
   int i;
@@ -243,6 +227,8 @@ apply_gpos_ltr (PangoGlyphString    *glyphs,
 
       if (is_hinted)
 	adjustment = PANGO_UNITS_ROUND (adjustment);
+      if (G_UNLIKELY (scale))
+	adjustment *= xscale;
 
       if (positions[i].new_advance)
 	glyphs->glyphs[i].geometry.width  = adjustment;
@@ -260,14 +246,25 @@ apply_gpos_ltr (PangoGlyphString    *glyphs,
       for (j = back; j < i; j++)
 	glyphs->glyphs[i].geometry.x_offset -= glyphs->glyphs[j].geometry.width;
 
-      glyphs->glyphs[i].geometry.x_offset += PANGO_UNITS_26_6(x_pos);
-      glyphs->glyphs[i].geometry.y_offset -= PANGO_UNITS_26_6(y_pos);
+      if (G_UNLIKELY (scale))
+        {
+	  glyphs->glyphs[i].geometry.x_offset += xscale * PANGO_UNITS_26_6(x_pos);
+	  glyphs->glyphs[i].geometry.y_offset -= yscale * PANGO_UNITS_26_6(y_pos);
+	}
+      else
+        {
+	  glyphs->glyphs[i].geometry.x_offset += PANGO_UNITS_26_6(x_pos);
+	  glyphs->glyphs[i].geometry.y_offset -= PANGO_UNITS_26_6(y_pos);
+	}
     }
 }
 
 static void
 apply_gpos_rtl (PangoGlyphString    *glyphs,
 		hb_glyph_position_t *positions,
+		gboolean             scale,
+		double               xscale,
+		double               yscale,
 		gboolean             is_hinted)
 {
   int i;
@@ -287,6 +284,8 @@ apply_gpos_rtl (PangoGlyphString    *glyphs,
 
       if (is_hinted)
 	adjustment = PANGO_UNITS_ROUND (adjustment);
+      if (G_UNLIKELY (scale))
+	adjustment *= xscale;
 
       if (positions[i_rev].new_advance)
 	glyphs->glyphs[i].geometry.width  = adjustment;
@@ -306,8 +305,16 @@ apply_gpos_rtl (PangoGlyphString    *glyphs,
       for (j = i; j < back; j++)
 	glyphs->glyphs[i].geometry.x_offset += glyphs->glyphs[j].geometry.width;
 
-      glyphs->glyphs[i].geometry.x_offset += PANGO_UNITS_26_6(x_pos);
-      glyphs->glyphs[i].geometry.y_offset -= PANGO_UNITS_26_6(y_pos);
+      if (G_UNLIKELY (scale))
+        {
+	  glyphs->glyphs[i].geometry.x_offset += xscale * PANGO_UNITS_26_6(x_pos);
+	  glyphs->glyphs[i].geometry.y_offset -= yscale * PANGO_UNITS_26_6(y_pos);
+	}
+      else
+        {
+	  glyphs->glyphs[i].geometry.x_offset += PANGO_UNITS_26_6(x_pos);
+	  glyphs->glyphs[i].geometry.y_offset -= PANGO_UNITS_26_6(y_pos);
+	}
     }
 }
 
@@ -389,16 +396,34 @@ pango_ot_buffer_output (const PangoOTBuffer *buffer,
   if (buffer->rtl)
     {
       /* Swap all glyphs */
-      swap_range (glyphs, 0, glyphs->num_glyphs);
+      pango_glyph_string_reverse_range (glyphs, 0, glyphs->num_glyphs);
     }
 
   positions = hb_buffer_get_glyph_positions (buffer->buffer);
   if (buffer->applied_gpos)
     {
+      gboolean scale = FALSE;
+      double xscale = 1, yscale = 1;
+      PangoFcFontKey *key = _pango_fc_font_get_font_key (buffer->font);
+
+      /* This is a kludge, and dupped in pango_fc_font_kern_glyphs().
+       * Should move the scale factor to PangoFcFont layer. */
+      if (key) {
+	const PangoMatrix *matrix = pango_fc_font_key_get_matrix (key);
+	PangoMatrix identity = PANGO_MATRIX_INIT;
+	if (G_UNLIKELY (matrix && 0 != memcmp (&identity, matrix, 4 * sizeof (double))))
+	  {
+	    scale = TRUE;
+	    pango_matrix_get_font_scale_factors (matrix, &xscale, &yscale);
+	    if (xscale) xscale = 1 / xscale;
+	    if (yscale) yscale = 1 / yscale;
+	  }
+      }
+
       if (buffer->rtl)
-	apply_gpos_rtl (glyphs, positions, buffer->font->is_hinted);
+	apply_gpos_rtl (glyphs, positions, scale, xscale, yscale, buffer->font->is_hinted);
       else
-	apply_gpos_ltr (glyphs, positions, buffer->font->is_hinted);
+	apply_gpos_ltr (glyphs, positions, scale, xscale, yscale, buffer->font->is_hinted);
     }
   else
     {

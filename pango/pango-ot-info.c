@@ -112,7 +112,7 @@ _get_table  (hb_tag_t tag, void *user_data)
 
   return hb_blob_create ((const char *) buffer, length,
 			 HB_MEMORY_MODE_WRITABLE,
-			 g_free, NULL);
+			 g_free, buffer);
 }
 
 
@@ -137,14 +137,14 @@ pango_ot_info_get (FT_Face face)
   else
     {
       if (face->generic.finalizer)
-        face->generic.finalizer (face->generic.data);
+        face->generic.finalizer (face);
 
       info = face->generic.data = g_object_new (PANGO_TYPE_OT_INFO, NULL);
       face->generic.finalizer = pango_ot_info_finalizer;
 
       info->face = face;
 
-      if (face->stream->base != NULL) {
+      if (face->stream->read == NULL) {
 	hb_blob_t *blob;
 
 	blob = hb_blob_create ((const char *) face->stream->base,
@@ -301,8 +301,7 @@ synthesize_class_def (PangoOTInfo *info)
 
   g_array_free (glyph_infos, TRUE);
 
-  hb_ot_layout_build_glyph_classes (info->hb_face, info->face->num_glyphs,
-				    glyph_indices, classes, j);
+  hb_ot_layout_build_glyph_classes (info->hb_face, glyph_indices, classes, j);
 
   g_free (glyph_indices);
   g_free (classes);
