@@ -45,8 +45,7 @@ env['DOT_IN_SUBS'] = {'@PANGO_VERSION_MAJOR@': str(PANGO_VERSION_MAJOR),
                       '@libdir@': '${prefix}/lib',
                       '@includedir@': '${prefix}/include',
                       '@WIN32_LIBS@': '-lgdi32',
-                      #'@PKGCONFIG_CAIRO_REQUIRES@': 'pangoft2 pangowin32'
-                      '@PKGCONFIG_CAIRO_REQUIRES@': 'pangowin32' #pangoft2 doesn't compile yet
+                      '@PKGCONFIG_CAIRO_REQUIRES@': 'pangoft2 pangowin32'
                       }
 env.DotIn('config.h', 'config.h.in')
 env.DotIn('pango.pc', 'pango.pc.in')

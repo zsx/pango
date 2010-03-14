@@ -13,8 +13,7 @@ env.Append(CPPDEFINES = [("G_LOG_DOMAIN", r'"\"Pango\""'),
                          ("LIBDIR", r'"\"' + env['PREFIX'].replace('\\', '\\\\') + r'\\lib\""')])
 env.Append(CPPPATH=['#', '#pango'])
 
-SConscript(['mini-fribidi/SConscript'#, 'opentype/SConscript' #doesn't compile yet
-    ], exports='env')
+SConscript(['mini-fribidi/SConscript', 'opentype/SConscript'], exports='env')
 
 env_pango = env.Clone(PDB='libpango.pdb')
 
@@ -128,11 +127,11 @@ if 'dev' in env['install']:
     env.Alias('install', env.InstallAs(r'C:/lib/libpango-1.0.lib', 'pango-1.0.lib'))
     if env_pango['DEBUG'] == 1:
         env.Alias('install', env.Install(r'C:/pdb', 'libpango.pdb'))
-'''
-#freetype2 doesn't compile yet
+
 #pangoft2
 env_pangoft2 = env.Clone(PDB='libpangoft2.pdb')
 env_pangoft2.Append(CPPDEFINES=['HAVE_FREETYPE', ('PANGO_MODULE_PREFIX', '_pango_basic_ft2')])
+env_pangoft2.Append(CPPPATH='#/../msvc')
 libpangoft2_HEADERS = Split("\
 	pango-ot.h		\
 	pangofc-font.h		\
@@ -152,8 +151,10 @@ libpangoft2_SOURCES += Split("\
 	pango-ot-info.c		\
 	pango-ot-ruleset.c      \
 	pango-ot-tag.c")
+libpangoft2_SOURCES += ['#/modules/basic/basic-fc.c']
 env_pangoft2.DotIn('module-defs-fc.c', 'module-defs-fc.c.win32')
 env_pangoft2.ParseConfig('pkg-config freetype2 --cflags --libs')
+env_pangoft2.ParseConfig('pkg-config fontconfig --cflags --libs')
 env_pangoft2.ParseConfig('pkg-config gobject-2.0 --cflags --libs')
 env_pangoft2.ParseConfig('pkg-config gmodule-2.0 --cflags --libs')
 env_pangoft2.Append(LIBS=['kernel32', 'user32', 'gdi32', 'advapi32'])
@@ -169,6 +170,34 @@ if 'dev' in env['install']:
     env.Alias('install', env.InstallAs(r'C:/lib/libpangoft2-1.0.lib', 'pangoft2-1.0.lib'))
     if env_pangoft2['DEBUG'] == 1:
         env.Alias('install', env.Install(r'C:/pdb', 'libpangoft2.pdb'))
+#pangoxft
+#require X11
+'''
+env_pangoxft = env.Clone(PDB='libpangoxft.pdb')
+env_pangoxft.Append(CPPDEFINES=['HAVE_FREETYPE'])
+env_pangoxft.Append(CPPPATH='#/../msvc')
+libpangoxft_HEADERS = Split("pangoxft.h pangoxft-render.h")
+libpangoxft_SOURCES = Split("\
+	pangoxft-font.c		\
+	pangoxft-fontmap.c      \
+	pangoxft-render.c")
+env_pangoxft.ParseConfig('pkg-config freetype2 --cflags --libs')
+env_pangoxft.ParseConfig('pkg-config fontconfig --cflags --libs')
+env_pangoxft.ParseConfig('pkg-config gobject-2.0 --cflags --libs')
+env_pangoxft.ParseConfig('pkg-config gmodule-2.0 --cflags --libs')
+env_pangoxft.Append(LIBS=['kernel32', 'user32', 'gdi32', 'advapi32'])
+dll = env_pangoxft.SharedLibrary(['libpangoxft' + env_pangoxft['LIB_SUFFIX'] + '.dll', 'pangoxft-1.0.lib'], libpangoxft_SOURCES + ['pango-1.0.lib', 'pangoxft.def', 'pango.res'])
+env_pangoxft.AddPostAction(dll, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;2')
+
+if 'run' in env['install']:
+    env.Alias('install', env.Install(r'C:/bin', 'libpangoxft' + env_pangoxft['LIB_SUFFIX'] + '.dll'))
+
+if 'dev' in env['install']:
+    env.Alias('install', env.Install(r'C:/include/pango-1.0/pango', libpangoxft_HEADERS))
+    env.Alias('install', env.Install(r'C:/lib', 'pangoxft-1.0.lib'))
+    env.Alias('install', env.InstallAs(r'C:/lib/libpangoxft-1.0.lib', 'pangoxft-1.0.lib'))
+    if env_pangoxft['DEBUG'] == 1:
+        env.Alias('install', env.Install(r'C:/pdb', 'libpangoxft.pdb'))
 '''
 
 #pangocairo
