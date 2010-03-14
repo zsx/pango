@@ -26,4 +26,5 @@ for x in tests:
     e = env_tests.Clone(PDB = x + '.pdb')
     e.Program(x, x + '.c')
     if x == 'gen-all-unicode':
+        e.PrependENVPath('PATH', e['PREFIX'] + r'\\bin')
         e.Command('all-unicode.txt', 'gen-all-unicode.exe', '$SOURCE > $TARGET')
