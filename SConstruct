@@ -48,11 +48,14 @@ env['DOT_IN_SUBS'] = {'@PANGO_VERSION_MAJOR@': str(PANGO_VERSION_MAJOR),
                       '@PKGCONFIG_CAIRO_REQUIRES@': 'pangoft2 pangowin32'
                       }
 env.DotIn('config.h', 'config.h.in')
-env.DotIn('pango.pc', 'pango.pc.in')
-env.DotIn('pangowin32.pc', 'pangowin32.pc.in')
-env.DotIn('pangocairo.pc', 'pangocairo.pc.in')
-env.DotIn('pangoft2.pc', 'pangoft2.pc.in')
-env.DotIn('pangoxft.pc', 'pangoxft.pc.in')
+pcs = ['pango.pc',
+       'pangoft.pc',
+       'pangocairo.pc',
+       'pangowin32.pc']
+for pc in pcs:
+    env.DotIn(pc, pc + '.in')
+env.Depends(pcs, 'SConstruct')
+                
 print "Install = ", env['install']
 if 'dev' in env['install']:
     env.Alias('install', env.Install('C:/lib/pkgconfig', ['pango.pc', 'pangowin32.pc', 'pangocairo.pc', 'pangoft2.pc', 'pangoxft.pc']))
