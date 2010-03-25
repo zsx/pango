@@ -11,7 +11,7 @@ opts.Add(ListVariable("install", "targets to install", ["run,dev"], ['run', 'dev
 opts.Add(BoolVariable('WITH_OSMSVCRT', 'Link with the os supplied msvcrt.dll instead of the one supplied by the compiler (msvcr90.dll, for instance)', 0))
 
 env = Environment(variables = opts,
-                  ENV=os.environ, tools = ['default', 'packaging', GBuilder])
+                  ENV=os.environ, tools = ['default', GBuilder])
 
 Initialize(env)
 env.Append(CPPPATH=['#'])
@@ -56,9 +56,7 @@ for pc in pcs:
     env.DotIn(pc, pc + '.in')
 env.Depends(pcs, 'SConstruct')
                 
-print "Install = ", env['install']
-if 'dev' in env['install']:
-    env.Alias('install', env.Install('C:/lib/pkgconfig', ['pango.pc', 'pangowin32.pc', 'pangocairo.pc', 'pangoft2.pc', 'pangoxft.pc']))
+env.Alias('install', env.Install('$PREFIX/lib/pkgconfig', pcs))
 
 subs = ['pango/SConscript',
         'pango-view/SConscript']
@@ -67,17 +65,3 @@ if ARGUMENTS.get('build_test', 0):
     subs += ['tests/SConscript']
 
 SConscript(subs, exports = 'env')
-
-if 'run' in env['install'] and \
-        'dev' in env['install']:
-    package_name = 'pango'
-elif 'run' in env['install']:
-    package_name = 'pango-runtime'
-elif 'dev' in env['install']:
-    package_name = 'pango-dev'
-
-env.Package(NAME            = package_name,
-            VERSION         = env['PANGO_VERSION'] + '.0',
-            PACKAGEVERSION  = 0,
-            PACKAGETYPE     = 'zip'
-            )

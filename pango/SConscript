@@ -90,8 +90,7 @@ env_pango_mk_c = env_pango_mk.Clone(GLIB_MKENUMS_ARGV = (('fhead', '"#include <p
 env_pango_mk_c.Depends(env_pango_mk_c.MkenumsGenerator('pango-enum-types.c', pango_headers), 'SConscript')
 
 env_pango.DotIn('pango-features.h', 'pango-features.h.in')
-if 'dev' in env['install']:
-    env.Alias('install', env.Install(r'C:/include/pango-1.0/pango', pango_headers + ['pango-enum-types.h', 'pango-features.h']))
+env_pango.Alias('install', env_pango.Install('$PREFIX/include/pango-1.0/pango', pango_headers + ['pango-enum-types.h', 'pango-features.h']))
 
 env_pango['DOT_SYMBOLS_FLAGS'] = '-DINCLUDE_VARIABLES -DG_OS_WIN32 -DALL_FILES'
 
@@ -119,14 +118,11 @@ dll = env_pango.SharedLibrary(['libpango' + env_pango['LIB_SUFFIX'] + '.dll', 'p
 env_pango.Depends(dll, 'pango-language-sample-table.h')
 
 env_pango.AddPostAction(dll, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;2')
-if 'run' in env['install']:
-    env.Alias('install', env.Install(r'C:/bin', 'libpango' + env_pango['LIB_SUFFIX'] + '.dll'))
-
-if 'dev' in env['install']:
-    env.Alias('install', env.Install(r'C:/lib', 'pango-1.0.lib'))
-    env.Alias('install', env.InstallAs(r'C:/lib/libpango-1.0.lib', 'pango-1.0.lib'))
-    if env_pango['DEBUG'] == 1:
-        env.Alias('install', env.Install(r'C:/pdb', 'libpango.pdb'))
+env_pango.Alias('install', env_pango.Install('$PREFIX/bin', 'libpango' + env_pango['LIB_SUFFIX'] + '.dll'))
+env_pango.Alias('install', env_pango.Install('$PREFIX/lib', 'pango-1.0.lib'))
+env_pango.Alias('install', env_pango.InstallAs('$PREFIX/lib/libpango-1.0.lib', 'pango-1.0.lib'))
+if env_pango['DEBUG'] == 1:
+    env_pango.Alias('install', env_pango.Install('$PREFIX/pdb', 'libpango.pdb'))
 
 #pangoft2
 env_pangoft2 = env.Clone(PDB='libpangoft2.pdb')
@@ -215,16 +211,12 @@ env_pangocairo.ParseConfig('pkg-config gmodule-2.0 --cflags --libs')
 env_pangocairo.Append(LIBS=['kernel32', 'user32', 'gdi32', 'advapi32'])
 dll = env_pangocairo.SharedLibrary(['libpangocairo' + env_pangocairo['LIB_SUFFIX'] + '.dll', 'pangocairo-1.0.lib'], libpangocairo_SOURCES + ['pango-1.0.lib', 'pangowin32-1.0.lib', 'pangocairo.def', 'pango.res'])
 env_pangocairo.AddPostAction(dll, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;2')
-
-if 'run' in env['install']:
-    env.Alias('install', env.Install(r'C:/bin', 'libpangocairo' + env_pangocairo['LIB_SUFFIX'] + '.dll'))
-
-if 'dev' in env['install']:
-    env.Alias('install', env.Install(r'C:/include/pango-1.0/pango', 'pangocairo.h'))
-    env.Alias('install', env.Install(r'C:/lib', 'pangocairo-1.0.lib'))
-    env.Alias('install', env.InstallAs(r'C:/lib/libpangocairo-1.0.lib', 'pangocairo-1.0.lib'))
-    if env_pangocairo['DEBUG'] == 1:
-        env.Alias('install', env.Install(r'C:/pdb', 'libpangocairo.pdb'))
+env_pangocairo.Alias('install', env_pangocairo.Install('$PREFIX/include/pango-1.0/pango', 'pangocairo.h'))
+env_pangocairo.Alias('install', env_pangocairo.Install('$PREFIX/bin', 'libpangocairo' + env_pangocairo['LIB_SUFFIX'] + '.dll'))
+env_pangocairo.Alias('install', env_pangocairo.Install('$PREFIX/lib', 'pangocairo-1.0.lib'))
+env_pangocairo.Alias('install', env_pangocairo.InstallAs('$PREFIX/lib/libpangocairo-1.0.lib', 'pangocairo-1.0.lib'))
+if env_pangocairo['DEBUG'] == 1:
+    env_pangocairo.Alias('install', env_pangocairo.Install('$PREFIX/pdb', 'libpangocairo.pdb'))
 
 #modules
 env_modules_basic_win32 = env.Clone()
@@ -246,14 +238,12 @@ env_pangowin32.ParseConfig('pkg-config gmodule-2.0 --cflags --libs')
 env_pangowin32.Append(LIBS=['kernel32', 'user32', 'gdi32', 'advapi32'])
 dll = env_pangowin32.SharedLibrary(['libpangowin32' + env_pangowin32['LIB_SUFFIX'] + '.dll', 'pangowin32-1.0.lib'], libpangowin32_SOURCES + ['pango-1.0.lib', 'basic-win32.obj', 'pangowin32.def', 'pango.res'])
 env_pangowin32.AddPostAction(dll, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;2')
-if 'run' in env['install']:
-    env.Alias('install', env.Install(r'C:/bin', 'libpangowin32' + env_pangowin32['LIB_SUFFIX'] + '.dll'))
-if 'dev' in env['install']:
-    env.Alias('install', env.Install(r'C:/include/pango-1.0/pango', 'pangowin32.h'))
-    env.Alias('install', env.Install(r'C:/lib', 'pangowin32-1.0.lib'))
-    env.Alias('install', env.InstallAs(r'C:/lib/libpangowin32-1.0.lib', 'pangowin32-1.0.lib'))
-    if env_pangowin32['DEBUG'] == 1:
-        env.Alias('install', env.Install(r'C:/pdb', 'libpangowin32.pdb'))
+env_pangowin32.Alias('install', env_pangowin32.Install('$PREFIX/include/pango-1.0/pango', 'pangowin32.h'))
+env_pangowin32.Alias('install', env_pangowin32.Install('$PREFIX/bin', 'libpangowin32' + env_pangowin32['LIB_SUFFIX'] + '.dll'))
+env_pangowin32.Alias('install', env_pangowin32.Install('$PREFIX/lib', 'pangowin32-1.0.lib'))
+env_pangowin32.Alias('install', env_pangowin32.InstallAs('$PREFIX/lib/libpangowin32-1.0.lib', 'pangowin32-1.0.lib'))
+if env_pangowin32['DEBUG'] == 1:
+    env_pangowin32.Alias('install', env_pangowin32.Install('$PREFIX/pdb', 'libpangowin32.pdb'))
 
 #pango-query
 env_pango_query_modules = env_pango.Clone(PDB = 'pango-query.pdb')
