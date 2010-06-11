@@ -1,0 +1,16 @@
+<?xml version='1.0'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+   <Module Id='LibpangocairoRun' Language='1033' Version='@VERSION@'>
+      <Package Id='ea01cfae-cc04-45a7-b975-a961860b97cb' Description='Libpangocairo runtime package'
+                Comments='This is a windows installer for libpangocairo library runtime files'
+                Manufacturer='Gnome4Win' InstallerVersion='200' />
+ 
+      <Directory Id='TARGETDIR' Name='SourceDir'>
+		  <Directory Id='dlls' Name='bin'>
+			  <Component Id='dlls' Guid='f1d25605-0346-4572-a1f0-3c78ae7499fb'>
+				  @DLLS@
+			  </Component>
+		  </Directory>
+      </Directory>
+   </Module>
+</Wix>

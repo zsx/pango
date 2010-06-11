@@ -49,7 +49,7 @@ env['DOT_IN_SUBS'] = {'@PANGO_VERSION_MAJOR@': str(PANGO_VERSION_MAJOR),
                       }
 env.DotIn('config.h', 'config.h.in')
 pcs = ['pango.pc',
-       'pangoft.pc',
+       'pangoft2.pc',
        'pangocairo.pc',
        'pangowin32.pc']
 for pc in pcs:

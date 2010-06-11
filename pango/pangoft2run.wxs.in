@@ -1,0 +1,16 @@
+<?xml version='1.0'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+   <Module Id='Libpangoft2Run' Language='1033' Version='@VERSION@'>
+      <Package Id='073b3218-98d6-4560-8a66-75dd01ec5763' Description='Libpangoft2 runtime package'
+                Comments='This is a windows installer for libpangoft2 library runtime files'
+                Manufacturer='Gnome4Win' InstallerVersion='200' />
+ 
+      <Directory Id='TARGETDIR' Name='SourceDir'>
+		  <Directory Id='dlls' Name='bin'>
+			  <Component Id='dlls' Guid='b0c452ac-921a-4815-bcb0-2790a8bf709a'>
+				  @DLLS@
+			  </Component>
+		  </Directory>
+      </Directory>
+   </Module>
+</Wix>

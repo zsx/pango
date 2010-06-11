@@ -3,6 +3,7 @@ import tempfile
 import re
 import subprocess
 import os
+from site_init import generate_file_element
 
 Import('env')
 
@@ -91,6 +92,7 @@ env_pango_mk_c.Depends(env_pango_mk_c.MkenumsGenerator('pango-enum-types.c', pan
 
 env_pango.DotIn('pango-features.h', 'pango-features.h.in')
 env_pango.Alias('install', env_pango.Install('$PREFIX/include/pango-1.0/pango', pango_headers + ['pango-enum-types.h', 'pango-features.h']))
+env_pango['DOT_IN_SUBS']['@HEADERS@'] = generate_file_element(pango_headers + ['pango-enum-types.h', 'pango-features.h'], r'include/pango-1.0/pango', env_pango)
 
 env_pango['DOT_SYMBOLS_FLAGS'] = '-DINCLUDE_VARIABLES -DG_OS_WIN32 -DALL_FILES'
 
@@ -114,15 +116,31 @@ env_pango.ParseConfig('pkg-config cairo --cflags --libs')
 env_pango.ParseConfig('pkg-config gobject-2.0 --cflags --libs')
 env_pango.ParseConfig('pkg-config gmodule-2.0 --cflags --libs')
 #env_pango.Append(LIBS = ['msimg32',  'gdi32', 'user32'])
-dll = env_pango.SharedLibrary(['libpango' + env_pango['LIB_SUFFIX'] + '.dll', 'pango-1.0.lib'], pango_sources + ['mini-fribidi/mini-fribidi.lib', 'pango.def', 'pango.res'])
+pangoname = 'libpango' + env_pango['LIB_SUFFIX'] + '.dll'
+dll = env_pango.SharedLibrary([pangoname, 'pango-1.0.lib'], pango_sources + ['mini-fribidi/mini-fribidi.lib', 'pango.def', 'pango.res'])
 env_pango.Depends(dll, 'pango-language-sample-table.h')
 
 env_pango.AddPostAction(dll, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;2')
-env_pango.Alias('install', env_pango.Install('$PREFIX/bin', 'libpango' + env_pango['LIB_SUFFIX'] + '.dll'))
+env_pango.Alias('install', env_pango.Install('$PREFIX/bin', pangoname))
+env_pango['DOT_IN_SUBS']['@DLLS@'] = generate_file_element(pangoname, r'bin', env_pango)
+
 env_pango.Alias('install', env_pango.Install('$PREFIX/lib', 'pango-1.0.lib'))
 env_pango.Alias('install', env_pango.InstallAs('$PREFIX/lib/libpango-1.0.lib', 'pango-1.0.lib'))
+env_pango['DOT_IN_SUBS']['@LIBS@'] = generate_file_element(['pango-1.0.lib', 'libpango-1.0.lib'], r'lib', env_pango)
+env_pango['DOT_IN_SUBS']['@PCS@'] = generate_file_element('pango.pc', r'lib/pkgconfig', env_pango)
 if env_pango['DEBUG'] == 1:
     env_pango.Alias('install', env_pango.Install('$PREFIX/pdb', 'libpango.pdb'))
+    env['DOT_IN_SUBS']['@PDBS@'] = '''
+		  <Directory Id='pdb' Name='pdb'>
+			  <Component Id='pdbs' Guid='a0ab7559-28e9-4fbe-9efd-aaa4363eb932'>
+				  %s 
+			  </Component>
+		  </Directory>''' % generate_file_element(env_pango['PDB'], r'pdb', env_pango)
+
+env_pango.DotIn('pangorun.wxs', 'pangorun.wxs.in')
+env_pango.DotIn('pangodev.wxs', 'pangodev.wxs.in')
+env_pango.Depends(['pangorun.wxs', 'pangodev.wxs'], 'SConscript')
+env_pango.Alias('install', env_pango.Install('$PREFIX/wxs', ['pangorun.wxs', 'pangodev.wxs']))
 
 #pangoft2
 env_pangoft2 = env.Clone(PDB='libpangoft2.pdb')
@@ -154,18 +172,33 @@ env_pangoft2.ParseConfig('pkg-config fontconfig --cflags --libs')
 env_pangoft2.ParseConfig('pkg-config gobject-2.0 --cflags --libs')
 env_pangoft2.ParseConfig('pkg-config gmodule-2.0 --cflags --libs')
 env_pangoft2.Append(LIBS=['kernel32', 'user32', 'gdi32', 'advapi32'])
-dll = env_pangoft2.SharedLibrary(['libpangoft2' + env_pangoft2['LIB_SUFFIX'] + '.dll', 'pangoft2-1.0.lib'], libpangoft2_SOURCES + ['pango-1.0.lib', 'pangoft2.def', 'pango.res', 'opentype/libharfbuzz.lib'])
+pangoft2name = 'libpangoft2' + env_pangoft2['LIB_SUFFIX'] + '.dll'
+dll = env_pangoft2.SharedLibrary([pangoft2name, 'pangoft2-1.0.lib'], libpangoft2_SOURCES + ['pango-1.0.lib', 'pangoft2.def', 'pango.res', 'opentype/libharfbuzz.lib'])
 env_pangoft2.AddPostAction(dll, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;2')
 
-if 'run' in env['install']:
-    env.Alias('install', env.Install(r'C:/bin', 'libpangoft2' + env_pangoft2['LIB_SUFFIX'] + '.dll'))
+env_pangoft2.Alias('install', env_pangoft2.Install(r'$PREFIX/bin', pangoft2name))
+env_pangoft2['DOT_IN_SUBS']['@DLLS@'] = generate_file_element(pangoft2name, r'bin', env_pangoft2)
+env_pangoft2.Alias('install', env_pangoft2.Install(r'$PREFIX/include/pango-1.0/pango', libpangoft2_HEADERS))
+env_pangoft2['DOT_IN_SUBS']['@HEADERS@'] = generate_file_element(libpangoft2_HEADERS, r'include/pango-1.0/pango', env_pangoft2)
 
-if 'dev' in env['install']:
-    env.Alias('install', env.Install(r'C:/include/pango-1.0/pango', libpangoft2_HEADERS))
-    env.Alias('install', env.Install(r'C:/lib', 'pangoft2-1.0.lib'))
-    env.Alias('install', env.InstallAs(r'C:/lib/libpangoft2-1.0.lib', 'pangoft2-1.0.lib'))
-    if env_pangoft2['DEBUG'] == 1:
-        env.Alias('install', env.Install(r'C:/pdb', 'libpangoft2.pdb'))
+env_pangoft2.Alias('install', env_pangoft2.Install(r'$PREFIX/lib', 'pangoft2-1.0.lib'))
+env_pangoft2.Alias('install', env_pangoft2.InstallAs(r'$PREFIX/lib/libpangoft2-1.0.lib', 'pangoft2-1.0.lib'))
+env_pangoft2['DOT_IN_SUBS']['@LIBS@'] = generate_file_element(['libpangoft2-1.0.lib', 'pangoft2-1.0.lib'], r'lib', env_pangoft2)
+env_pangoft2['DOT_IN_SUBS']['@PCS@'] = generate_file_element(['pangoft2.pc'], r'lib/pkgconfig', env_pangoft2)
+
+if env_pangoft2['DEBUG'] == 1:
+    env_pangoft2.Alias('install', env_pangoft2.Install(r'$PREFIX/pdb', 'libpangoft2.pdb'))
+    env_pangoft2['DOT_IN_SUBS']['@PDBS@'] = '''
+		  <Directory Id='pdb' Name='pdb'>
+			  <Component Id='pdbs' Guid='58c165f2-96f4-4c10-8cd4-36baf2cf4e79'>
+				  %s 
+			  </Component>
+		  </Directory>''' % generate_file_element(env_pangoft2['PDB'], r'pdb', env_pangoft2)
+
+env_pangoft2.DotIn('pangoft2run.wxs', 'pangoft2run.wxs.in')
+env_pangoft2.DotIn('pangoft2dev.wxs', 'pangoft2dev.wxs.in')
+env_pangoft2.Depends(['pangoft2run.wxs', 'pangoft2dev.wxs'], 'SConscript')
+env_pangoft2.Alias('install', env_pangoft2.Install('$PREFIX/wxs', ['pangoft2run.wxs', 'pangoft2dev.wxs']))
 #pangoxft
 #require X11
 '''
@@ -186,14 +219,14 @@ dll = env_pangoxft.SharedLibrary(['libpangoxft' + env_pangoxft['LIB_SUFFIX'] + '
 env_pangoxft.AddPostAction(dll, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;2')
 
 if 'run' in env['install']:
-    env.Alias('install', env.Install(r'C:/bin', 'libpangoxft' + env_pangoxft['LIB_SUFFIX'] + '.dll'))
+    env.Alias('install', env.Install(r'$PREFIX/bin', 'libpangoxft' + env_pangoxft['LIB_SUFFIX'] + '.dll'))
 
 if 'dev' in env['install']:
-    env.Alias('install', env.Install(r'C:/include/pango-1.0/pango', libpangoxft_HEADERS))
-    env.Alias('install', env.Install(r'C:/lib', 'pangoxft-1.0.lib'))
-    env.Alias('install', env.InstallAs(r'C:/lib/libpangoxft-1.0.lib', 'pangoxft-1.0.lib'))
+    env.Alias('install', env.Install(r'$PREFIX/include/pango-1.0/pango', libpangoxft_HEADERS))
+    env.Alias('install', env.Install(r'$PREFIX/lib', 'pangoxft-1.0.lib'))
+    env.Alias('install', env.InstallAs(r'$PREFIX/lib/libpangoxft-1.0.lib', 'pangoxft-1.0.lib'))
     if env_pangoxft['DEBUG'] == 1:
-        env.Alias('install', env.Install(r'C:/pdb', 'libpangoxft.pdb'))
+        env.Alias('install', env.Install(r'$PREFIX/pdb', 'libpangoxft.pdb'))
 '''
 
 #pangocairo
@@ -209,14 +242,33 @@ env_pangocairo.ParseConfig('pkg-config cairo --cflags --libs')
 env_pangocairo.ParseConfig('pkg-config gobject-2.0 --cflags --libs')
 env_pangocairo.ParseConfig('pkg-config gmodule-2.0 --cflags --libs')
 env_pangocairo.Append(LIBS=['kernel32', 'user32', 'gdi32', 'advapi32'])
-dll = env_pangocairo.SharedLibrary(['libpangocairo' + env_pangocairo['LIB_SUFFIX'] + '.dll', 'pangocairo-1.0.lib'], libpangocairo_SOURCES + ['pango-1.0.lib', 'pangowin32-1.0.lib', 'pangocairo.def', 'pango.res'])
+pangocaironame = 'libpangocairo' + env_pangocairo['LIB_SUFFIX'] + '.dll'
+dll = env_pangocairo.SharedLibrary([pangocaironame, 'pangocairo-1.0.lib'], libpangocairo_SOURCES + ['pango-1.0.lib', 'pangowin32-1.0.lib', 'pangocairo.def', 'pango.res'])
 env_pangocairo.AddPostAction(dll, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;2')
 env_pangocairo.Alias('install', env_pangocairo.Install('$PREFIX/include/pango-1.0/pango', 'pangocairo.h'))
-env_pangocairo.Alias('install', env_pangocairo.Install('$PREFIX/bin', 'libpangocairo' + env_pangocairo['LIB_SUFFIX'] + '.dll'))
+env_pangocairo['DOT_IN_SUBS']['@HEADERS@'] = generate_file_element('pangocairo.h', r'include/pango-1.0/pango', env_pangocairo)
+
+env_pangocairo.Alias('install', env_pangocairo.Install('$PREFIX/bin', pangocaironame))
+env_pangocairo['DOT_IN_SUBS']['@DLLS@'] = generate_file_element(pangocaironame, r'bin', env_pangocairo)
+
 env_pangocairo.Alias('install', env_pangocairo.Install('$PREFIX/lib', 'pangocairo-1.0.lib'))
 env_pangocairo.Alias('install', env_pangocairo.InstallAs('$PREFIX/lib/libpangocairo-1.0.lib', 'pangocairo-1.0.lib'))
+env_pangocairo['DOT_IN_SUBS']['@LIBS@'] = generate_file_element(['libpangocairo-1.0.lib', 'pangocairo-1.0.lib'], r'lib', env_pangocairo)
+env_pangocairo['DOT_IN_SUBS']['@PCS@'] = generate_file_element(['pangocairo.pc'], r'lib/pkgconfig', env_pangocairo)
+
 if env_pangocairo['DEBUG'] == 1:
     env_pangocairo.Alias('install', env_pangocairo.Install('$PREFIX/pdb', 'libpangocairo.pdb'))
+    env_pangocairo['DOT_IN_SUBS']['@PDBS@'] = '''
+		  <Directory Id='pdb' Name='pdb'>
+			  <Component Id='pdbs' Guid='5ab0f7b7-840a-47ff-b81a-80a5cd4a9174'>
+				  %s 
+			  </Component>
+		  </Directory>''' % generate_file_element(env_pangocairo['PDB'], r'pdb', env_pangocairo)
+
+env_pangocairo.DotIn('pangocairorun.wxs', 'pangocairorun.wxs.in')
+env_pangocairo.DotIn('pangocairodev.wxs', 'pangocairodev.wxs.in')
+env_pangocairo.Depends(['pangocairorun.wxs', 'pangocairodev.wxs'], 'SConscript')
+env_pangocairo.Alias('install', env_pangocairo.Install('$PREFIX/wxs', ['pangocairorun.wxs', 'pangocairodev.wxs']))
 
 #modules
 env_modules_basic_win32 = env.Clone()
@@ -236,23 +288,43 @@ env_pangowin32.ParseConfig('pkg-config cairo --cflags --libs')
 env_pangowin32.ParseConfig('pkg-config gobject-2.0 --cflags --libs')
 env_pangowin32.ParseConfig('pkg-config gmodule-2.0 --cflags --libs')
 env_pangowin32.Append(LIBS=['kernel32', 'user32', 'gdi32', 'advapi32'])
-dll = env_pangowin32.SharedLibrary(['libpangowin32' + env_pangowin32['LIB_SUFFIX'] + '.dll', 'pangowin32-1.0.lib'], libpangowin32_SOURCES + ['pango-1.0.lib', 'basic-win32.obj', 'pangowin32.def', 'pango.res'])
+pangowin32name = 'libpangowin32' + env_pangowin32['LIB_SUFFIX'] + '.dll'
+dll = env_pangowin32.SharedLibrary([pangowin32name, 'pangowin32-1.0.lib'], libpangowin32_SOURCES + ['pango-1.0.lib', 'basic-win32.obj', 'pangowin32.def', 'pango.res'])
 env_pangowin32.AddPostAction(dll, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;2')
 env_pangowin32.Alias('install', env_pangowin32.Install('$PREFIX/include/pango-1.0/pango', 'pangowin32.h'))
-env_pangowin32.Alias('install', env_pangowin32.Install('$PREFIX/bin', 'libpangowin32' + env_pangowin32['LIB_SUFFIX'] + '.dll'))
+env_pangowin32['DOT_IN_SUBS']['@HEADERS@'] = generate_file_element('pangowin32.h', r'include/pango-1.0/pango', env_pangowin32)
+
+env_pangowin32.Alias('install', env_pangowin32.Install('$PREFIX/bin', pangowin32name))
+env_pangowin32['DOT_IN_SUBS']['@DLLS@'] = generate_file_element(pangowin32name, r'bin', env_pangowin32)
+
 env_pangowin32.Alias('install', env_pangowin32.Install('$PREFIX/lib', 'pangowin32-1.0.lib'))
 env_pangowin32.Alias('install', env_pangowin32.InstallAs('$PREFIX/lib/libpangowin32-1.0.lib', 'pangowin32-1.0.lib'))
+env_pangowin32['DOT_IN_SUBS']['@LIBS@'] = generate_file_element(['libpangowin32-1.0.lib', 'pangowin32-1.0.lib'], r'lib', env_pangowin32)
+env_pangowin32['DOT_IN_SUBS']['@PCS@'] = generate_file_element(['pangowin32.pc'], r'lib/pkgconfig', env_pangowin32)
 if env_pangowin32['DEBUG'] == 1:
     env_pangowin32.Alias('install', env_pangowin32.Install('$PREFIX/pdb', 'libpangowin32.pdb'))
+    env_pangowin32['DOT_IN_SUBS']['@PDBS@'] = '''
+		  <Directory Id='pdb' Name='pdb'>
+			  <Component Id='pdbs' Guid='201d1976-3879-4008-b279-b02b0f28fa37'>
+				  %s 
+			  </Component>
+		  </Directory>''' % generate_file_element(env_pangowin32['PDB'], r'pdb', env_pangowin32)
 
 #pango-query
 env_pango_query_modules = env_pango.Clone(PDB = 'pango-query.pdb')
 env_pango_query_modules.AddPostAction(
     env_pango_query_modules.Program('pango-querymodules', ['querymodules.c', 'pangowin32-1.0.lib', 'pango-1.0.lib']),
     'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;2')
-query_install = env_pango_query_modules.Install(r'C:/bin', 'pango-querymodules.exe')
+query_install = env_pango_query_modules.Install(r'$PREFIX/bin', 'pango-querymodules.exe')
+env_pangowin32['DOT_IN_SUBS']['@EXES@'] = generate_file_element('pango-querymodules.exe', r'bin', env_pangowin32)
 env_pango_query_modules.PrependENVPath("PATH", env_pango_query_modules['PREFIX'] + r'\\bin')
 env_pango_query_modules.Command('pango.modules', 'pango-querymodules.exe', '$SOURCE > $TARGET')
-pango_modules_install = env.Install(r'C:/etc/pango/', 'pango.modules')
-if 'run' in env['install']:
-    env.Alias('install', pango_modules_install)
+env_pango_query_modules.Depends('pango.modules', query_install)
+
+env_pango_query_modules.Alias('install', env_pango_query_modules.Install(r'$PREFIX/etc/pango/', 'pango.modules'))
+env_pangowin32['DOT_IN_SUBS']['@CONFS@'] = generate_file_element(['pango.modules'], r'etc/pango', env_pangowin32)
+
+env_pangowin32.DotIn('pangowin32run.wxs', 'pangowin32run.wxs.in')
+env_pangowin32.DotIn('pangowin32dev.wxs', 'pangowin32dev.wxs.in')
+env_pangowin32.Depends(['pangowin32run.wxs', 'pangowin32dev.wxs'], 'SConscript')
+env_pangowin32.Alias('install', env_pangowin32.Install('$PREFIX/wxs', ['pangowin32run.wxs', 'pangowin32dev.wxs']))

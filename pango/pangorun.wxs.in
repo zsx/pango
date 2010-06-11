@@ -1,0 +1,16 @@
+<?xml version='1.0'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+   <Module Id='LibpangoRun' Language='1033' Version='@VERSION@'>
+      <Package Id='a20740a1-77ca-4a3e-b4c9-d0d919fe18f3' Description='Libpango runtime package'
+                Comments='This is a windows installer for libpango library runtime files'
+                Manufacturer='Gnome4Win' InstallerVersion='200' />
+ 
+      <Directory Id='TARGETDIR' Name='SourceDir'>
+		  <Directory Id='dlls' Name='bin'>
+			  <Component Id='dlls' Guid='a1f9367c-1998-4ca7-b4a0-f327a937fac1'>
+				  @DLLS@
+			  </Component>
+		  </Directory>
+      </Directory>
+   </Module>
+</Wix>

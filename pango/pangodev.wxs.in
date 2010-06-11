@@ -1,0 +1,27 @@
+<?xml version='1.0'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+   <Module Id='LibpangoDev' Language='1033' Version='@VERSION@'>
+      <Package Id='2850bea4-1c18-427f-ba28-9bc54c5861ea' Description='Libpango devlopement package'
+                Comments='This is a windows installer for libpango library devlopment files'
+                Manufacturer='Gnome4Win' InstallerVersion='200' />
+ 
+      <Directory Id='TARGETDIR' Name='SourceDir'>
+		  <Directory Id='include' Name='include'>
+			  <Component Id='headers' Guid='01739e24-5107-43d0-ab51-04bcabf37a7f'>
+				  @HEADERS@
+			  </Component>
+		  </Directory>
+		  <Directory Id='lib' Name='lib'>
+			  <Component Id='libs' Guid='d042e677-c05c-4990-920c-dc049a8cc9dd'>
+				  @LIBS@
+			  </Component>
+			  <Directory Id='pkgconfig' Name='pkgconfig'>
+				  <Component Id='pcs' Guid='8f146eae-8c1a-4264-b0f4-7f60715a60d3'>
+					  @PCS@
+				  </Component>
+			  </Directory>
+		  </Directory>
+                  @PDBS@
+      </Directory>
+   </Module>
+</Wix>

@@ -1,0 +1,27 @@
+<?xml version='1.0'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+   <Module Id='LibpangocairoDev' Language='1033' Version='@VERSION@'>
+      <Package Id='31367443-04eb-4554-8d5e-e486f51757b2' Description='Libpangocairo devlopement package'
+                Comments='This is a windows installer for libpangocairo library devlopment files'
+                Manufacturer='Gnome4Win' InstallerVersion='200' />
+ 
+      <Directory Id='TARGETDIR' Name='SourceDir'>
+		  <Directory Id='include' Name='include'>
+			  <Component Id='headers' Guid='f1a0f7d3-900d-4398-91fa-dcd8a9dae224'>
+				  @HEADERS@
+			  </Component>
+		  </Directory>
+		  <Directory Id='lib' Name='lib'>
+			  <Component Id='libs' Guid='e881b5d0-cbc5-41ea-b713-615e957201b9'>
+				  @LIBS@
+			  </Component>
+			  <Directory Id='pkgconfig' Name='pkgconfig'>
+				  <Component Id='pcs' Guid='fa52276b-aeb2-482e-b615-85162395045a'>
+					  @PCS@
+				  </Component>
+			  </Directory>
+		  </Directory>
+                  @PDBS@
+      </Directory>
+   </Module>
+</Wix>

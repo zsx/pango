@@ -1,0 +1,27 @@
+<?xml version='1.0'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+   <Module Id='Libpangowin32Dev' Language='1033' Version='@VERSION@'>
+      <Package Id='dff3551d-5dbc-44e5-affb-28c085a74482' Description='Libpangowin32 devlopement package'
+                Comments='This is a windows installer for libpangowin32 library devlopment files'
+                Manufacturer='Gnome4Win' InstallerVersion='200' />
+ 
+      <Directory Id='TARGETDIR' Name='SourceDir'>
+		  <Directory Id='include' Name='include'>
+			  <Component Id='headers' Guid='75457dc6-afec-4556-a1cb-a1885a4bcf8a'>
+				  @HEADERS@
+			  </Component>
+		  </Directory>
+		  <Directory Id='lib' Name='lib'>
+			  <Component Id='libs' Guid='0f098153-4e1f-463b-bf65-774003085252'>
+				  @LIBS@
+			  </Component>
+			  <Directory Id='pkgconfig' Name='pkgconfig'>
+				  <Component Id='pcs' Guid='7e3a03a0-c8ec-4f2b-a42b-d4a28515ce3d'>
+					  @PCS@
+				  </Component>
+			  </Directory>
+		  </Directory>
+                  @PDBS@
+      </Directory>
+   </Module>
+</Wix>

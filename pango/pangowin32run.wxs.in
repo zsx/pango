@@ -1,0 +1,26 @@
+<?xml version='1.0'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+   <Module Id='Libpangowin32Run' Language='1033' Version='@VERSION@'>
+      <Package Id='94295ab4-3a53-43ec-bca8-2ce6ff0b1711' Description='Libpangowin32 runtime package'
+                Comments='This is a windows installer for libpangowin32 library runtime files'
+                Manufacturer='Gnome4Win' InstallerVersion='200' />
+ 
+      <Directory Id='TARGETDIR' Name='SourceDir'>
+		  <Directory Id='dlls' Name='bin'>
+			  <Component Id='dlls' Guid='b8bf126d-f4a7-4bc9-8f8d-a7fabac50875'>
+				  @DLLS@
+			  </Component>
+			  <Component Id='exes' Guid='871cc189-b3a0-4ed8-a66e-d0818bc49634'>
+				  @EXES@
+			  </Component>
+		  </Directory>
+		  <Directory Id='etc' Name='etc'>
+                          <Directory Id='pango' Name='pango'>
+                                  <Component Id='confs' Guid='235470ae-2528-4a2b-addd-106e04642fbe'>
+                                          @CONFS@
+                                  </Component>
+                          </Directory>
+		  </Directory>
+      </Directory>
+   </Module>
+</Wix>

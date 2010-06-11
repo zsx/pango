@@ -1,0 +1,27 @@
+<?xml version='1.0'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+   <Module Id='Libpangoft2Dev' Language='1033' Version='@VERSION@'>
+      <Package Id='c4a126a7-7314-4189-8ed5-94f33e435625' Description='Libpangoft2 devlopement package'
+                Comments='This is a windows installer for libpangoft2 library devlopment files'
+                Manufacturer='Gnome4Win' InstallerVersion='200' />
+ 
+      <Directory Id='TARGETDIR' Name='SourceDir'>
+		  <Directory Id='include' Name='include'>
+			  <Component Id='headers' Guid='5c9fa2a7-bf39-4c3d-b7e4-422fe2fda68d'>
+				  @HEADERS@
+			  </Component>
+		  </Directory>
+		  <Directory Id='lib' Name='lib'>
+			  <Component Id='libs' Guid='4d1e1399-0f3a-486b-ae2a-3ba550cb135a'>
+				  @LIBS@
+			  </Component>
+			  <Directory Id='pkgconfig' Name='pkgconfig'>
+				  <Component Id='pcs' Guid='59877855-dca0-445e-a75a-f2bef0d49b85'>
+					  @PCS@
+				  </Component>
+			  </Directory>
+		  </Directory>
+                  @PDBS@
+      </Directory>
+   </Module>
+</Wix>
